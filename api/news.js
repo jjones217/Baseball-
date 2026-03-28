@@ -46,7 +46,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/news?limit=8&teams=${espnId}`;
+    const url = `https://site.api.espn.com/apis/site/v2/sports/baseball/mlb/teams/${espnId}/news?limit=8`;
     const response = await fetch(url);
 
     if (!response.ok) {
