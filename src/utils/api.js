@@ -46,6 +46,34 @@ export function classifyDate(dateStr) {
   return 'other';
 }
 
+export async function fetchLeaders(categories, season, { limit = 10, playerPool = '' } = {}) {
+  const params = new URLSearchParams({
+    leaderCategories: categories.join(','),
+    season,
+    sportId: 1,
+    limit,
+    hydrate: 'person,team',
+    leaderGameTypes: 'R',
+    ...(playerPool && { playerPool }),
+  });
+  const res = await fetch(`${BASE_URL}/stats/leaders?${params}`);
+  if (!res.ok) throw new Error(`Leaders fetch failed: ${res.status}`);
+  const data = await res.json();
+
+  // Build a map: { personId -> { person, team, stats: { category: value } } }
+  const map = new Map();
+  for (const board of data.leagueLeaders || []) {
+    const cat = board.leaderCategory;
+    for (const entry of board.leaders || []) {
+      const id = entry.person?.id;
+      if (!id) continue;
+      if (!map.has(id)) map.set(id, { person: entry.person, team: entry.team, stats: {} });
+      map.get(id).stats[cat] = entry.value;
+    }
+  }
+  return Array.from(map.values());
+}
+
 export function getDefaultDate() {
   const now = new Date();
   const hour = now.getHours();

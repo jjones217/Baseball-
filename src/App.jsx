@@ -2,6 +2,7 @@ import { useState } from 'react';
 import GamesView from './components/GamesView';
 import Standings from './components/Standings';
 import NewsView from './components/NewsView';
+import StatsLeaders from './components/StatsLeaders';
 import { getDefaultDate } from './utils/api';
 import { getFavoriteTeamId, setFavoriteTeamId } from './utils/favorites';
 import './App.css';
@@ -49,6 +50,12 @@ export default function App() {
               Standings
             </button>
             <button
+              className={`nav-btn ${tab === 'leaders' ? 'active' : ''}`}
+              onClick={() => setTab('leaders')}
+            >
+              Leaders
+            </button>
+            <button
               className={`nav-btn ${tab === 'news' ? 'active' : ''}`}
               onClick={() => setTab('news')}
             >
@@ -69,6 +76,9 @@ export default function App() {
         )}
         {tab === 'standings' && (
           <Standings season={CURRENT_SEASON} />
+        )}
+        {tab === 'leaders' && (
+          <StatsLeaders season={CURRENT_SEASON} favoriteTeamId={favoriteTeamId} />
         )}
         {tab === 'news' && (
           <NewsView favoriteTeamId={favoriteTeamId} />

@@ -720,6 +720,122 @@ body {
 }
 
 /* ==========================================
+   Stats Leaders
+   ========================================== */
+
+.stats-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-top: 1.5rem;
+}
+
+.leader-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.leader-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  padding: 0.7rem 1rem;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+
+.sl-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.sl-table th,
+.sl-table td {
+  padding: 0.5rem 0.6rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.sl-table th {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.sl-table tbody tr {
+  border-bottom: 1px solid rgba(46, 42, 36, 0.5);
+  transition: background 0.1s;
+}
+
+.sl-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.sl-table tbody tr:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.sl-rank {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  width: 2rem;
+  text-align: center !important;
+}
+
+.sl-player {
+  text-align: left !important;
+  padding-left: 0.75rem !important;
+  min-width: 160px;
+}
+
+.sl-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 0.4rem;
+}
+
+.sl-team {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.sl-primary {
+  font-weight: 700;
+  color: var(--text-primary) !important;
+}
+
+.sl-star {
+  color: var(--gold);
+  font-size: 0.7rem;
+  margin-right: 0.25rem;
+}
+
+/* Favorite row highlight */
+.fav-row {
+  background: rgba(var(--fav-color, 201 169 110) / 0.06) !important;
+  border-left: 3px solid var(--fav-color, var(--gold-dim)) !important;
+}
+
+.fav-row td {
+  color: var(--text-primary);
+}
+
+/* ==========================================
    News View
    ========================================== */
 
