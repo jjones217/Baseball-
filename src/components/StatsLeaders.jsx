@@ -106,6 +106,9 @@ function getSortConfig(activeDays) {
   };
 }
 
+const isPitcher = (p) => p.position?.type === 'Pitcher' || p.position?.abbreviation === 'P';
+const isHitter  = (p) => !isPitcher(p);
+
 export default function StatsLeaders({ season, favoriteTeamId }) {
   const [activeDays, setActiveDays] = useState(0);
   const [hitters,    setHitters]    = useState([]);
@@ -127,9 +130,9 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     ])
       .then(([h, sp, rp]) => {
         const sc = getSortConfig(activeDays);
-        setHitters(sortBy(h,   sc.hitter.key,   sc.hitter.dir).slice(0, 10));
-        setStarters(sortBy(sp, sc.starter.key,  sc.starter.dir).slice(0, 5));
-        setRelievers(sortBy(rp,sc.reliever.key, sc.reliever.dir).slice(0, 5));
+        setHitters(sortBy(h.filter(isHitter),   sc.hitter.key,   sc.hitter.dir).slice(0, 10));
+        setStarters(sortBy(sp.filter(isPitcher), sc.starter.key,  sc.starter.dir).slice(0, 5));
+        setRelievers(sortBy(rp.filter(isPitcher),sc.reliever.key, sc.reliever.dir).slice(0, 5));
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));

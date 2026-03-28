@@ -69,7 +69,7 @@ export async function fetchLeaders(categories, season, { limit = 10, playerPool 
     for (const entry of board.leaders || []) {
       const id = entry.person?.id;
       if (!id) continue;
-      if (!map.has(id)) map.set(id, { person: entry.person, team: entry.team, stats: {} });
+      if (!map.has(id)) map.set(id, { person: entry.person, team: entry.team, position: entry.person?.primaryPosition, stats: {} });
       map.get(id).stats[cat] = entry.value;
     }
   }
