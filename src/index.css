@@ -1268,3 +1268,90 @@ body {
   font-size: 0.78rem;
   flex: 1;
 }
+
+/* ==========================================
+   Bottom Tab Bar (mobile)
+   ========================================== */
+
+.bottom-tab-bar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: linear-gradient(0deg, #0a0908 0%, #12100e 100%);
+  border-top: 1px solid var(--border);
+  padding: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.tab-bar-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.55rem 0.25rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.tab-bar-btn.active {
+  color: var(--gold);
+}
+
+.tab-bar-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.tab-bar-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+  .bottom-tab-bar {
+    display: flex;
+  }
+  .app-nav {
+    display: none;
+  }
+  .app-main {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+  }
+}
+
+/* ==========================================
+   Box Score Button
+   ========================================== */
+
+.boxscore-btn {
+  background: rgba(201, 169, 110, 0.08);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+
+.boxscore-btn:hover {
+  background: rgba(201, 169, 110, 0.15);
+  border-color: var(--gold);
+}
+
+.boxscore-btn.active {
+  background: rgba(201, 169, 110, 0.18);
+  border-color: var(--gold);
+}

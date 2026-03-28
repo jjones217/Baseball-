@@ -8,9 +8,10 @@ const STARTER_CATS  = ['earnedRunAverage', 'wins', 'strikeouts', 'inningsPitched
 const RELIEVER_CATS = ['saves', 'holds', 'earnedRunAverage', 'strikeouts', 'inningsPitched'];
 
 const FILTERS = [
-  { label: 'Season',  days: 0  },
-  { label: 'Last 30', days: 30 },
-  { label: 'Last 7',  days: 7  },
+  { label: 'Today',   days: 'today' },
+  { label: 'Season',  days: 0       },
+  { label: 'Last 30', days: 30      },
+  { label: 'Last 7',  days: 7       },
 ];
 
 function getDateRange(days) {
@@ -107,7 +108,7 @@ const isPitcher  = (p) => p.position?.type === 'Pitcher' || p.position?.abbrevia
 const isHitter   = (p) => !isPitcher(p);
 
 export default function StatsLeaders({ season, favoriteTeamId }) {
-  const [activeDays, setActiveDays] = useState(0);
+  const [activeDays, setActiveDays] = useState('today');
   const [hitters,    setHitters]    = useState([]);
   const [starters,   setStarters]   = useState([]);
   const [relievers,  setRelievers]  = useState([]);
@@ -115,6 +116,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
   const [error,      setError]      = useState(null);
 
   useEffect(() => {
+    if (activeDays === 'today') return; // handled by TopPerformers
     setLoading(true);
     setError(null);
     const { startDate, endDate } = getDateRange(activeDays);
@@ -135,7 +137,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
       .finally(() => setLoading(false));
   }, [season, activeDays]);
 
-  const isShortRange = activeDays > 0 && activeDays <= 7;
+  const isShortRange = activeDays === 7;
 
   const hitterCols = [
     { key: 'hits',                        label: 'H',    primary: isShortRange },
@@ -166,7 +168,6 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
 
   return (
     <div className="stats-wrap">
-      <TopPerformers season={season} favoriteTeamId={favoriteTeamId} />
       <div className="leaders-filter-bar">
         {FILTERS.map((f) => (
           <button
@@ -179,11 +180,16 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
         ))}
       </div>
 
-      {error && <div className="error">{error}</div>}
-
-      <LeaderTable title="Top 10 Hitters"           players={hitters}   cols={hitterCols}   loading={loading} favoriteTeamId={favoriteTeamId} />
-      <LeaderTable title="Top 5 Starting Pitchers"  players={starters}  cols={starterCols}  loading={loading} favoriteTeamId={favoriteTeamId} />
-      <LeaderTable title="Top 5 Relievers"          players={relievers} cols={relieverCols} loading={loading} favoriteTeamId={favoriteTeamId} />
+      {activeDays === 'today' ? (
+        <TopPerformers season={season} favoriteTeamId={favoriteTeamId} />
+      ) : (
+        <>
+          {error && <div className="error">{error}</div>}
+          <LeaderTable title="Top 10 Hitters"           players={hitters}   cols={hitterCols}   loading={loading} favoriteTeamId={favoriteTeamId} />
+          <LeaderTable title="Top 5 Starting Pitchers"  players={starters}  cols={starterCols}  loading={loading} favoriteTeamId={favoriteTeamId} />
+          <LeaderTable title="Top 5 Relievers"          players={relievers} cols={relieverCols} loading={loading} favoriteTeamId={favoriteTeamId} />
+        </>
+      )}
     </div>
   );
 }

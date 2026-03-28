@@ -37,30 +37,10 @@ export default function App() {
           </div>
 
           <nav className="app-nav">
-            <button
-              className={`nav-btn ${tab === 'games' ? 'active' : ''}`}
-              onClick={() => setTab('games')}
-            >
-              Scores
-            </button>
-            <button
-              className={`nav-btn ${tab === 'standings' ? 'active' : ''}`}
-              onClick={() => setTab('standings')}
-            >
-              Standings
-            </button>
-            <button
-              className={`nav-btn ${tab === 'leaders' ? 'active' : ''}`}
-              onClick={() => setTab('leaders')}
-            >
-              Leaders
-            </button>
-            <button
-              className={`nav-btn ${tab === 'news' ? 'active' : ''}`}
-              onClick={() => setTab('news')}
-            >
-              News
-            </button>
+            <button className={`nav-btn ${tab === 'games'     ? 'active' : ''}`} onClick={() => setTab('games')}>Scores</button>
+            <button className={`nav-btn ${tab === 'standings' ? 'active' : ''}`} onClick={() => setTab('standings')}>Standings</button>
+            <button className={`nav-btn ${tab === 'leaders'   ? 'active' : ''}`} onClick={() => setTab('leaders')}>Leaders</button>
+            <button className={`nav-btn ${tab === 'news'      ? 'active' : ''}`} onClick={() => setTab('news')}>News</button>
           </nav>
         </div>
       </header>
@@ -88,6 +68,24 @@ export default function App() {
       <footer className="app-footer">
         <span>Data via MLB Stats API · NavHawk {CURRENT_SEASON}</span>
       </footer>
+
+      <nav className="bottom-tab-bar">
+        {[
+          { key: 'games',     label: 'Scores',    icon: '⚾' },
+          { key: 'standings', label: 'Standings',  icon: '🏆' },
+          { key: 'leaders',   label: 'Leaders',    icon: '📊' },
+          { key: 'news',      label: 'News',       icon: '📰' },
+        ].map(({ key, label, icon }) => (
+          <button
+            key={key}
+            className={`tab-bar-btn ${tab === key ? 'active' : ''}`}
+            onClick={() => setTab(key)}
+          >
+            <span className="tab-bar-icon">{icon}</span>
+            <span className="tab-bar-label">{label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }

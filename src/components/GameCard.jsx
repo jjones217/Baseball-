@@ -93,15 +93,16 @@ export default function GameCard({ game, isFavorite, favoriteTeamId, onSetFavori
     >
       {isFavorite && <div className="fav-bar" style={{ background: favTeamColors.primary }} />}
 
-      <div
-        className="card-header"
-        onClick={() => (isFinal || isLive) && setExpanded((e) => !e)}
-        style={(isFinal || isLive) ? { cursor: 'pointer' } : {}}
-      >
+      <div className="card-header">
         <StatusBadge status={status} />
         {!isFinal && !isLive && <span className="game-time">{gameTime}</span>}
         {(isFinal || isLive) && (
-          <span className="expand-chevron">{expanded ? '▲' : '▼'}</span>
+          <button
+            className={`boxscore-btn ${expanded ? 'active' : ''}`}
+            onClick={() => setExpanded((e) => !e)}
+          >
+            Box Score {expanded ? '▲' : '▼'}
+          </button>
         )}
       </div>
 
