@@ -46,7 +46,7 @@ export function classifyDate(dateStr) {
   return 'other';
 }
 
-export async function fetchLeaders(categories, season, { limit = 10, playerPool = '' } = {}) {
+export async function fetchLeaders(categories, season, { limit = 10, playerPool = '', startDate = '', endDate = '' } = {}) {
   const params = new URLSearchParams({
     leaderCategories: categories.join(','),
     season,
@@ -54,7 +54,9 @@ export async function fetchLeaders(categories, season, { limit = 10, playerPool 
     limit,
     hydrate: 'person,team',
     leaderGameTypes: 'R',
-    ...(playerPool && { playerPool }),
+    ...(playerPool  && { playerPool }),
+    ...(startDate   && { startDate }),
+    ...(endDate     && { endDate }),
   });
   const res = await fetch(`${BASE_URL}/stats/leaders?${params}`);
   if (!res.ok) throw new Error(`Leaders fetch failed: ${res.status}`);

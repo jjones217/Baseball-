@@ -6,9 +6,25 @@ const HITTER_CATS   = ['battingAverage', 'homeRuns', 'rbi', 'hits', 'stolenBases
 const STARTER_CATS  = ['earnedRunAverage', 'wins', 'strikeouts', 'inningsPitched', 'walksAndHitsPerInningPitched'];
 const RELIEVER_CATS = ['saves', 'holds', 'earnedRunAverage', 'strikeouts'];
 
+const FILTERS = [
+  { label: 'Season',    days: 0  },
+  { label: 'Last 30',   days: 30 },
+  { label: 'Last 7',    days: 7  },
+  { label: 'Today',     days: 1  },
+];
+
+function getDateRange(days) {
+  if (days === 0) return { startDate: '', endDate: '' };
+  const end   = new Date();
+  const start = new Date();
+  start.setDate(end.getDate() - (days - 1));
+  const fmt = (d) => `${String(d.getMonth() + 1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
+  return { startDate: fmt(start), endDate: fmt(end) };
+}
+
 function PlayerRow({ rank, player, cols, favoriteTeamId }) {
   const teamId = player.team?.id;
-  const isFav = teamId === favoriteTeamId;
+  const isFav  = teamId === favoriteTeamId;
   const colors = getTeamColors(teamId);
 
   return (
@@ -30,13 +46,12 @@ function PlayerRow({ rank, player, cols, favoriteTeamId }) {
   );
 }
 
-function LeaderTable({ title, players, cols, loading, error, favoriteTeamId }) {
+function LeaderTable({ title, players, cols, loading, favoriteTeamId }) {
   return (
     <div className="leader-section">
       <h3 className="leader-title">{title}</h3>
       {loading && <div className="loading" style={{ padding: '1.5rem 0' }}><div className="spinner" /> Loading…</div>}
-      {error   && <div className="error">{error}</div>}
-      {!loading && !error && (
+      {!loading && (
         <div className="sl-table-wrap">
           <table className="sl-table">
             <thead>
@@ -49,7 +64,9 @@ function LeaderTable({ title, players, cols, loading, error, favoriteTeamId }) {
               </tr>
             </thead>
             <tbody>
-              {players.map((p, i) => (
+              {players.length === 0 ? (
+                <tr><td colSpan={cols.length + 2} className="sl-empty">No data available</td></tr>
+              ) : players.map((p, i) => (
                 <PlayerRow
                   key={p.person?.id ?? i}
                   rank={i + 1}
@@ -67,79 +84,73 @@ function LeaderTable({ title, players, cols, loading, error, favoriteTeamId }) {
 }
 
 export default function StatsLeaders({ season, favoriteTeamId }) {
-  const [hitters,   setHitters]   = useState([]);
-  const [starters,  setStarters]  = useState([]);
-  const [relievers, setRelievers] = useState([]);
-  const [loading,   setLoading]   = useState(true);
-  const [error,     setError]     = useState(null);
+  const [activeDays, setActiveDays] = useState(0);
+  const [hitters,    setHitters]    = useState([]);
+  const [starters,   setStarters]   = useState([]);
+  const [relievers,  setRelievers]  = useState([]);
+  const [loading,    setLoading]    = useState(true);
+  const [error,      setError]      = useState(null);
 
   useEffect(() => {
     setLoading(true);
     setError(null);
+    const { startDate, endDate } = getDateRange(activeDays);
+    const opts = (extra = {}) => ({ startDate, endDate, limit: 10, ...extra });
 
     Promise.all([
-      fetchLeaders(HITTER_CATS,   season, { limit: 10 }),
-      fetchLeaders(STARTER_CATS,  season, { limit: 10, playerPool: 'qualified' }),
-      fetchLeaders(RELIEVER_CATS, season, { limit: 10 }),
+      fetchLeaders(HITTER_CATS,   season, opts()),
+      fetchLeaders(STARTER_CATS,  season, opts({ playerPool: activeDays === 0 ? 'qualified' : '' })),
+      fetchLeaders(RELIEVER_CATS, season, opts()),
     ])
       .then(([h, sp, rp]) => {
-        // Sort each group by primary stat, take top N
-        setHitters(sortBy(h,  'battingAverage', 'desc').slice(0, 10));
+        setHitters(sortBy(h,   'battingAverage',   'desc').slice(0, 10));
         setStarters(sortBy(sp, 'earnedRunAverage', 'asc').slice(0, 5));
-        setRelievers(sortBy(rp, 'saves', 'desc').slice(0, 5));
+        setRelievers(sortBy(rp,'saves',            'desc').slice(0, 5));
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [season]);
+  }, [season, activeDays]);
 
   const hitterCols = [
-    { key: 'battingAverage',  label: 'AVG',  primary: true },
-    { key: 'homeRuns',        label: 'HR' },
-    { key: 'rbi',             label: 'RBI' },
-    { key: 'hits',            label: 'H' },
-    { key: 'stolenBases',     label: 'SB' },
+    { key: 'battingAverage',              label: 'AVG',  primary: true },
+    { key: 'homeRuns',                    label: 'HR'  },
+    { key: 'rbi',                         label: 'RBI' },
+    { key: 'hits',                        label: 'H'   },
+    { key: 'stolenBases',                 label: 'SB'  },
   ];
-
   const starterCols = [
-    { key: 'earnedRunAverage',              label: 'ERA',  primary: true },
-    { key: 'wins',                          label: 'W' },
-    { key: 'strikeouts',                    label: 'K' },
-    { key: 'inningsPitched',                label: 'IP' },
-    { key: 'walksAndHitsPerInningPitched',  label: 'WHIP' },
+    { key: 'earnedRunAverage',             label: 'ERA',  primary: true },
+    { key: 'wins',                         label: 'W'   },
+    { key: 'strikeouts',                   label: 'K'   },
+    { key: 'inningsPitched',               label: 'IP'  },
+    { key: 'walksAndHitsPerInningPitched', label: 'WHIP'},
   ];
-
   const relieverCols = [
-    { key: 'saves',             label: 'SV',  primary: true },
-    { key: 'holds',             label: 'HLD' },
-    { key: 'earnedRunAverage',  label: 'ERA' },
-    { key: 'strikeouts',        label: 'K' },
+    { key: 'saves',            label: 'SV',  primary: true },
+    { key: 'holds',            label: 'HLD' },
+    { key: 'earnedRunAverage', label: 'ERA' },
+    { key: 'strikeouts',       label: 'K'   },
   ];
-
-  if (error) return <div className="error" style={{ marginTop: '1.5rem' }}>{error}</div>;
 
   return (
     <div className="stats-wrap">
-      <LeaderTable
-        title="Top 10 Hitters"
-        players={hitters}
-        cols={hitterCols}
-        loading={loading}
-        favoriteTeamId={favoriteTeamId}
-      />
-      <LeaderTable
-        title="Top 5 Starting Pitchers"
-        players={starters}
-        cols={starterCols}
-        loading={loading}
-        favoriteTeamId={favoriteTeamId}
-      />
-      <LeaderTable
-        title="Top 5 Relievers"
-        players={relievers}
-        cols={relieverCols}
-        loading={loading}
-        favoriteTeamId={favoriteTeamId}
-      />
+      <div className="leaders-filter-bar">
+        {FILTERS.map((f) => (
+          <button
+            key={f.days}
+            className={`leaders-filter-btn ${activeDays === f.days ? 'active' : ''}`}
+            onClick={() => setActiveDays(f.days)}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {error && <div className="error">{error}</div>}
+
+      <LeaderTable title="Top 10 Hitters"           players={hitters}   cols={hitterCols}   loading={loading} favoriteTeamId={favoriteTeamId} />
+      <LeaderTable title="Top 5 Starting Pitchers"  players={starters}  cols={starterCols}  loading={loading} favoriteTeamId={favoriteTeamId} />
+      <LeaderTable title="Top 5 Relievers"          players={relievers} cols={relieverCols} loading={loading} favoriteTeamId={favoriteTeamId} />
     </div>
   );
 }

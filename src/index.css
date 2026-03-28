@@ -730,6 +730,43 @@ body {
   padding-top: 1.5rem;
 }
 
+.leaders-filter-bar {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.leaders-filter-btn {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.leaders-filter-btn:hover {
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+
+.leaders-filter-btn.active {
+  background: rgba(201, 169, 110, 0.1);
+  border-color: var(--gold-dim);
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.sl-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  padding: 1.5rem !important;
+}
+
 .leader-section {
   background: var(--bg-card);
   border: 1px solid var(--border);
