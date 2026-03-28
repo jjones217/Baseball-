@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import GamesView from './components/GamesView';
 import Standings from './components/Standings';
+import NewsView from './components/NewsView';
 import { getDefaultDate } from './utils/api';
 import './App.css';
 
@@ -40,6 +41,12 @@ export default function App() {
             >
               Standings
             </button>
+            <button
+              className={`nav-btn ${tab === 'news' ? 'active' : ''}`}
+              onClick={() => setTab('news')}
+            >
+              News
+            </button>
           </nav>
         </div>
       </header>
@@ -50,6 +57,9 @@ export default function App() {
         )}
         {tab === 'standings' && (
           <Standings season={CURRENT_SEASON} />
+        )}
+        {tab === 'news' && (
+          <NewsView />
         )}
       </main>
 
