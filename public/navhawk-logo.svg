@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+
+  <!-- Outer compass ring -->
+  <circle cx="100" cy="100" r="94" fill="none" stroke="#c9a96e" stroke-width="2.5"/>
+  <circle cx="100" cy="100" r="87" fill="none" stroke="#c9a96e" stroke-width="0.75" opacity="0.3"/>
+
+  <!-- North spike (prominent) -->
+  <path d="M100 4 L104 19 L100 15 L96 19Z" fill="#c9a96e"/>
+  <path d="M100 4 L107 17 L100 22 L93 17Z" fill="#c9a96e" opacity="0.45"/>
+
+  <!-- South / East / West minor spikes -->
+  <path d="M100 196 L103 182 L100 185 L97 182Z" fill="#c9a96e"/>
+  <path d="M196 100 L182 97 L185 100 L182 103Z" fill="#c9a96e"/>
+  <path d="M4 100 L18 97 L15 100 L18 103Z" fill="#c9a96e"/>
+
+  <!-- Globe grid lines -->
+  <ellipse cx="100" cy="100" rx="94" ry="28" fill="none" stroke="#c9a96e" stroke-width="0.7" opacity="0.18"/>
+  <ellipse cx="100" cy="75"  rx="74" ry="16" fill="none" stroke="#c9a96e" stroke-width="0.6" opacity="0.14"/>
+  <line x1="100" y1="6"  x2="100" y2="194" stroke="#c9a96e" stroke-width="0.7" opacity="0.18"/>
+  <line x1="6"   y1="100" x2="194" y2="100" stroke="#c9a96e" stroke-width="0.7" opacity="0.18"/>
+  <line x1="35"  y1="35"  x2="165" y2="165" stroke="#c9a96e" stroke-width="0.5" opacity="0.12"/>
+  <line x1="165" y1="35"  x2="35"  y2="165" stroke="#c9a96e" stroke-width="0.5" opacity="0.12"/>
+
+  <!-- ═══════════ LEFT WING (large, multi-feather) ═══════════ -->
+  <path d="
+    M95 90
+    Q82 83 66 71
+    Q48 57 26 59
+    Q13 61 9 73
+    Q8 84 18 89
+    Q32 79 48 82
+    Q38 90 40 99
+    Q56 87 64 90
+    Q57 97 59 105
+    Q74 94 82 96
+    L92 99 Z"
+    fill="#c9a96e"/>
+
+  <!-- ═══════════ RIGHT WING (smaller) ═══════════ -->
+  <path d="
+    M108 87
+    Q122 79 136 70
+    Q150 61 161 65
+    Q169 71 165 81
+    Q154 76 146 80
+    Q149 87 147 94
+    Q138 87 129 91
+    L114 96 Z"
+    fill="#c9a96e"/>
+
+  <!-- ═══════════ BODY / CHEST ═══════════ -->
+  <path d="M92 99 L89 113 Q95 124 100 126 Q105 124 111 113 L114 96 Q106 89 100 89 Q94 89 92 99Z"
+    fill="#c9a96e"/>
+
+  <!-- ═══════════ NECK + HEAD (facing right) ═══════════ -->
+  <path d="
+    M112 82
+    Q122 70 136 68
+    Q150 66 157 76
+    Q163 88 156 99
+    Q147 107 134 103
+    Q118 98 112 88 Z"
+    fill="#c9a96e"/>
+
+  <!-- Hooked beak -->
+  <path d="M154 78 L173 89 L158 99 Z" fill="#8a6d3b"/>
+  <path d="M154 78 L168 85 L157 91 Z" fill="#a07830"/>
+
+  <!-- Eye -->
+  <circle cx="140" cy="83" r="5.5" fill="#0d0b09"/>
+  <circle cx="138" cy="81" r="1.8" fill="#c9a96e" opacity="0.5"/>
+
+  <!-- ═══════════ SUBMARINE ═══════════ -->
+  <!-- Hull -->
+  <path d="
+    M36 148
+    Q42 132 76 127
+    Q100 124 130 126
+    Q158 128 168 138
+    Q176 148 165 156
+    Q138 166 100 166
+    Q62 166 44 158
+    Q33 153 36 148 Z"
+    fill="#c9a96e"/>
+
+  <!-- Conning tower -->
+  <path d="M114 127 L119 108 L140 108 L145 127Z" fill="#c9a96e"/>
+
+  <!-- Periscopes -->
+  <line x1="126" y1="108" x2="126" y2="97"  stroke="#c9a96e" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="126" cy="95" r="3" fill="none" stroke="#c9a96e" stroke-width="1.8"/>
+  <line x1="136" y1="108" x2="136" y2="102" stroke="#c9a96e" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Water waves -->
+  <path d="M22 146 Q38 137 54 146 Q70 155 86 146 Q102 137 118 146 Q134 155 150 146 Q163 138 178 146"
+    fill="none" stroke="#c9a96e" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+  <path d="M28 156 Q44 148 60 156 Q76 164 92 156 Q108 148 124 156 Q140 164 155 156 Q166 149 175 155"
+    fill="none" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+
+</svg>
