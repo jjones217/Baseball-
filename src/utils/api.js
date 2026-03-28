@@ -76,6 +76,12 @@ export async function fetchLeaders(categories, season, { limit = 10, playerPool 
   return Array.from(map.values());
 }
 
+export async function fetchBoxScore(gamePk) {
+  const res = await fetch(`${BASE_URL}/game/${gamePk}/boxscore`);
+  if (!res.ok) throw new Error(`Box score fetch failed: ${res.status}`);
+  return res.json();
+}
+
 export function getDefaultDate() {
   const now = new Date();
   const hour = now.getHours();

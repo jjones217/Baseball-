@@ -383,6 +383,139 @@ body {
   margin-left: auto;
 }
 
+.expand-chevron {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+/* ==========================================
+   Box Score
+   ========================================== */
+
+.box-score {
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bs-team-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.bs-team-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.bs-view-toggle {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.bs-toggle-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.2em 0.55em;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.12s;
+}
+
+.bs-toggle-btn:hover {
+  color: var(--text-secondary);
+  border-color: var(--border-light);
+}
+
+.bs-toggle-btn.active {
+  background: rgba(201,169,110,0.1);
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+.bs-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.bs-table th,
+.bs-table td {
+  padding: 0.25em 0.4em;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.bs-table th {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.bs-table tbody tr:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+.bs-name {
+  text-align: left !important;
+  color: var(--text-primary) !important;
+  min-width: 130px;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bs-pos {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-right: 0.3em;
+  min-width: 1.8em;
+  display: inline-block;
+}
+
+.bs-sub td {
+  color: var(--text-muted);
+}
+
+.bs-sub-indent {
+  display: inline-block;
+  width: 0.75em;
+}
+
+.bs-avg {
+  color: var(--text-muted) !important;
+  font-size: 0.68rem;
+}
+
+.bs-totals td {
+  border-top: 1px solid var(--border);
+  font-weight: 700;
+  color: var(--text-primary) !important;
+}
+
 /* ==========================================
    Matchup Row
    ========================================== */
