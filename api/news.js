@@ -79,8 +79,8 @@ function parseRSS(xml) {
 
     const link = extractTag(item, 'link') || '';
     const pubDate = extractTag(item, 'pubDate') || '';
-    const rawDesc = extractCDATA(item, 'description') || extractTag(item, 'description') || '';
-    const description = stripHtml(rawDesc).trim().slice(0, 220);
+    // Google News descriptions are just the title + source in HTML — not useful
+    const description = '';
 
     if (title) {
       articles.push({ title, source, description, link: link.trim(), pubDate: pubDate.trim(), thumbnail: null });
@@ -102,11 +102,13 @@ function extractTag(str, tag) {
 
 function stripHtml(str) {
   return str
-    .replace(/<[^>]+>/g, '')
-    .replace(/&amp;/g, '&')
+    // Decode encoded entities first so encoded tags get stripped too
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/\s+/g, ' ');
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
