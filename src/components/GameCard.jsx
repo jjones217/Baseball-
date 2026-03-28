@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Linescore from './Linescore';
 import BoxScore from './BoxScore';
+import Lineup from './Lineup';
 import { getTeamColors } from '../utils/teamColors';
 
 function TeamLogo({ teamId, teamName, size = 48 }) {
@@ -53,7 +54,8 @@ function StarButton({ teamId, isFav, onSetFavorite }) {
 }
 
 export default function GameCard({ game, isFavorite, favoriteTeamId, onSetFavorite }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded,       setExpanded]       = useState(false);
+  const [lineupExpanded, setLineupExpanded] = useState(false);
   const away = game.teams?.away;
   const home = game.teams?.home;
   const awayTeam = away?.team;
@@ -96,6 +98,14 @@ export default function GameCard({ game, isFavorite, favoriteTeamId, onSetFavori
       <div className="card-header">
         <StatusBadge status={status} />
         {!isFinal && !isLive && <span className="game-time">{gameTime}</span>}
+        {!isFinal && !isLive && (
+          <button
+            className={`boxscore-btn ${lineupExpanded ? 'active' : ''}`}
+            onClick={() => setLineupExpanded((e) => !e)}
+          >
+            Lineup {lineupExpanded ? '▲' : '▼'}
+          </button>
+        )}
         {(isFinal || isLive) && (
           <button
             className={`boxscore-btn ${expanded ? 'active' : ''}`}
@@ -160,6 +170,10 @@ export default function GameCard({ game, isFavorite, favoriteTeamId, onSetFavori
 
       {(isFinal || isLive) && linescore && (
         <Linescore linescore={linescore} awayTeam={awayTeam} homeTeam={homeTeam} accentColor={accentColor} />
+      )}
+
+      {lineupExpanded && !isFinal && !isLive && (
+        <Lineup game={game} />
       )}
 
       {expanded && (isFinal || isLive) && (

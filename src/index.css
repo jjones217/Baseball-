@@ -1355,3 +1355,85 @@ body {
   background: rgba(201, 169, 110, 0.18);
   border-color: var(--gold);
 }
+
+/* ==========================================
+   Lineup
+   ========================================== */
+
+.lineup-wrap {
+  display: flex;
+  gap: 0;
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.lineup-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.lineup-divider {
+  width: 1px;
+  background: var(--border);
+  margin: 0 0.75rem;
+  flex-shrink: 0;
+}
+
+.lineup-team-name {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.lineup-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.5rem;
+}
+
+.lineup-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.22rem 0;
+  font-size: 0.78rem;
+  border-bottom: 1px solid rgba(46, 42, 36, 0.35);
+}
+
+.lineup-row:last-child {
+  border-bottom: none;
+}
+
+.lineup-pos {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  width: 2rem;
+  flex-shrink: 0;
+}
+
+.lineup-name {
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lineup-sp {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding-top: 0.5rem;
+  margin-top: 0.25rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+}
+
+.lineup-tbd {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0.25rem 0;
+  font-style: italic;
+}
