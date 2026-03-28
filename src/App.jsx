@@ -24,11 +24,12 @@ export default function App() {
       <header className="app-header">
         <div className="header-inner">
           <div className="brand">
-            <img
-              src="/navhawk-logo.svg"
-              alt="NavHawk"
-              className="brand-icon"
-            />
+            <svg className="brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="13" stroke="#c9a96e" strokeWidth="1.5" fill="none"/>
+              <path d="M8 16 Q10 10 16 16 Q22 22 24 16" stroke="#c9a96e" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+              <path d="M8 16 Q10 22 16 16 Q22 10 24 16" stroke="#8a6d3b" strokeWidth="1" fill="none" strokeLinecap="round" opacity="0.7"/>
+              <circle cx="16" cy="16" r="2" fill="#c9a96e" opacity="0.4"/>
+            </svg>
             <div className="brand-text">
               <span className="brand-name">NavHawk</span>
               <span className="brand-sub">MLB Recap</span>
