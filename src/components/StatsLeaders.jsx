@@ -7,10 +7,9 @@ const STARTER_CATS  = ['earnedRunAverage', 'wins', 'strikeouts', 'inningsPitched
 const RELIEVER_CATS = ['saves', 'holds', 'earnedRunAverage', 'strikeouts'];
 
 const FILTERS = [
-  { label: 'Season',    days: 0  },
-  { label: 'Last 30',   days: 30 },
-  { label: 'Last 7',    days: 7  },
-  { label: 'Today',     days: 1  },
+  { label: 'Season',  days: 0  },
+  { label: 'Last 30', days: 30 },
+  { label: 'Last 7',  days: 7  },
 ];
 
 function getDateRange(days) {
@@ -85,18 +84,11 @@ function LeaderTable({ title, players, cols, loading, favoriteTeamId }) {
 
 // For short date ranges, meaningful sort keys differ from season-long
 function getSortConfig(activeDays) {
-  if (activeDays === 1) {
+  if (activeDays > 0 && activeDays <= 7) {
     return {
       hitter:   { key: 'hits',        dir: 'desc' },
       starter:  { key: 'strikeouts',  dir: 'desc' },
       reliever: { key: 'strikeouts',  dir: 'desc' },
-    };
-  }
-  if (activeDays <= 7) {
-    return {
-      hitter:   { key: 'hits',              dir: 'desc' },
-      starter:  { key: 'strikeouts',        dir: 'desc' },
-      reliever: { key: 'saves',             dir: 'desc' },
     };
   }
   return {
@@ -106,8 +98,13 @@ function getSortConfig(activeDays) {
   };
 }
 
-const isPitcher = (p) => p.position?.type === 'Pitcher' || p.position?.abbreviation === 'P';
-const isHitter  = (p) => !isPitcher(p);
+const isStarter  = (p) => p.position?.abbreviation === 'SP';
+const isReliever = (p) => {
+  const abbr = p.position?.abbreviation;
+  return abbr === 'RP' || abbr === 'P' || (p.position?.type === 'Pitcher' && abbr !== 'SP');
+};
+const isPitcher  = (p) => isStarter(p) || isReliever(p);
+const isHitter   = (p) => !isPitcher(p);
 
 export default function StatsLeaders({ season, favoriteTeamId }) {
   const [activeDays, setActiveDays] = useState(0);
@@ -130,15 +127,15 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     ])
       .then(([h, sp, rp]) => {
         const sc = getSortConfig(activeDays);
-        setHitters(sortBy(h.filter(isHitter),   sc.hitter.key,   sc.hitter.dir).slice(0, 10));
-        setStarters(sortBy(sp.filter(isPitcher), sc.starter.key,  sc.starter.dir).slice(0, 5));
-        setRelievers(sortBy(rp.filter(isPitcher),sc.reliever.key, sc.reliever.dir).slice(0, 5));
+        setHitters(sortBy(h.filter(isHitter),    sc.hitter.key,   sc.hitter.dir).slice(0, 10));
+        setStarters(sortBy(sp.filter(isStarter),  sc.starter.key,  sc.starter.dir).slice(0, 5));
+        setRelievers(sortBy(rp.filter(isReliever),sc.reliever.key, sc.reliever.dir).slice(0, 5));
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, [season, activeDays]);
 
-  const isShortRange = activeDays === 1 || activeDays === 7;
+  const isShortRange = activeDays > 0 && activeDays <= 7;
 
   const hitterCols = [
     { key: 'hits',                        label: 'H',    primary: isShortRange },
