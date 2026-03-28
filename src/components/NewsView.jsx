@@ -96,7 +96,7 @@ export default function NewsView() {
       .then((data) => setArticles(data.articles || []))
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [slug]);
+  }, [selectedTeamId]);
 
   return (
     <div className="news-view">
