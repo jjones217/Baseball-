@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getTeamColors, teamColors } from '../utils/teamColors';
+import { getTeamColors } from '../utils/teamColors';
 import { teamSlugs } from '../utils/teamSlugs';
 
 const ALL_TEAMS = Object.entries(teamSlugs).map(([id, slug]) => ({
@@ -82,15 +82,13 @@ export default function NewsView() {
   const [error, setError] = useState(null);
 
   const team = getTeamColors(selectedTeamId);
-  const slug = teamSlugs[selectedTeamId];
 
   useEffect(() => {
-    if (!slug) return;
     setLoading(true);
     setError(null);
     setArticles([]);
 
-    fetch(`/api/news?teamSlug=${slug}`)
+    fetch(`/api/news?teamId=${selectedTeamId}`)
       .then((r) => {
         if (!r.ok) throw new Error(`Request failed: ${r.status}`);
         return r.json();
