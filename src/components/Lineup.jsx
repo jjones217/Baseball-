@@ -9,14 +9,17 @@ function LineupColumn({ players, team, probablePitcher }) {
       </div>
       {players && players.length > 0 ? (
         <ol className="lineup-list">
-          {players.map((p, i) => (
-            <li key={p.id ?? i} className="lineup-row">
-              <span className="lineup-pos" style={{ color: colors.primary }}>
-                {p.position?.abbreviation || '—'}
-              </span>
-              <span className="lineup-name">{p.fullName}</span>
-            </li>
-          ))}
+          {players.map((p, i) => {
+            const name = p.fullName ?? p.person?.fullName ?? '—';
+            const pos  = p.position?.abbreviation ?? p.primaryPosition?.abbreviation ?? '—';
+            const key  = p.id ?? p.person?.id ?? i;
+            return (
+              <li key={key} className="lineup-row">
+                <span className="lineup-pos" style={{ color: colors.primary }}>{pos}</span>
+                <span className="lineup-name">{name}</span>
+              </li>
+            );
+          })}
         </ol>
       ) : (
         <p className="lineup-tbd">Lineup not yet posted</p>
@@ -33,8 +36,9 @@ function LineupColumn({ players, team, probablePitcher }) {
 
 export default function Lineup({ game }) {
   const lineups = game.lineups;
-  const awayPlayers = lineups?.awayTeam;
-  const homePlayers = lineups?.homeTeam;
+  // MLB API uses awayTeam/homeTeam keys; fallback to away/home
+  const awayPlayers = lineups?.awayTeam ?? lineups?.away;
+  const homePlayers = lineups?.homeTeam ?? lineups?.home;
   const awayTeam = game.teams?.away?.team;
   const homeTeam = game.teams?.home?.team;
   const awayProbable = game.teams?.away?.probablePitcher;
