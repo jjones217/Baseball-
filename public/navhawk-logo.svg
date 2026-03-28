@@ -1,75 +1,73 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
 
-  <!-- ── Compass ring ── -->
-  <circle cx="50" cy="50" r="46" fill="none" stroke="#c9a96e" stroke-width="2"/>
+  <!-- ── Compass ring (double) ── -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#c9a96e" stroke-width="3"/>
+  <circle cx="100" cy="100" r="88" fill="none" stroke="#c9a96e" stroke-width="1" opacity="0.35"/>
 
-  <!-- Cardinal spikes: N prominent, others small -->
-  <polygon points="50,3  53.5,15  50,12  46.5,15"  fill="#c9a96e"/>
-  <polygon points="50,3  56,14    50,19  44,14"     fill="#c9a96e" opacity="0.4"/>
-  <polygon points="50,97 53,86 50,89 47,86"         fill="#c9a96e"/>
-  <polygon points="97,50 86,47 89,50 86,53"         fill="#c9a96e"/>
-  <polygon points="3,50  14,47 11,50 14,53"         fill="#c9a96e"/>
+  <!-- North spike: double for emphasis -->
+  <path d="M100 5 L105 19 L100 15 L95 19Z"  fill="#c9a96e"/>
+  <path d="M100 5 L108 17 L100 23 L92 17Z"  fill="#c9a96e" opacity="0.45"/>
+  <!-- S / E / W minor spikes -->
+  <path d="M100 195 L104 182 L100 185 L96 182Z" fill="#c9a96e"/>
+  <path d="M195 100 L182 96  L185 100 L182 104Z" fill="#c9a96e"/>
+  <path d="M5   100 L18  96  L15  100 L18  104Z" fill="#c9a96e"/>
 
-  <!-- Crosshair + equator grid (subtle) -->
-  <line x1="50" y1="5"  x2="50" y2="95" stroke="#c9a96e" stroke-width="0.5" opacity="0.18"/>
-  <line x1="5"  y1="50" x2="95" y2="50" stroke="#c9a96e" stroke-width="0.5" opacity="0.18"/>
-  <ellipse cx="50" cy="50" rx="46" ry="13" fill="none" stroke="#c9a96e" stroke-width="0.5" opacity="0.15"/>
+  <!-- Globe grid (subtle) -->
+  <line x1="100" y1="8"   x2="100" y2="192" stroke="#c9a96e" stroke-width="0.7" opacity="0.18"/>
+  <line x1="8"   y1="100" x2="192" y2="100" stroke="#c9a96e" stroke-width="0.7" opacity="0.18"/>
+  <ellipse cx="100" cy="100" rx="95" ry="27" fill="none" stroke="#c9a96e" stroke-width="0.6" opacity="0.15"/>
+  <ellipse cx="100" cy="75"  rx="70" ry="16" fill="none" stroke="#c9a96e" stroke-width="0.5" opacity="0.11"/>
 
-  <!-- ── Hawk silhouette ── -->
+  <!-- ══════════════════════════════════
+       HAWK  (faces right)
+       ══════════════════════════════════ -->
 
-  <!-- Left wing — one clean filled sweep -->
-  <path d="M48 56
-           C 40 50, 25 42, 8  47
-           C 5  52, 9  58, 18 57
-           C 12 62, 13 68, 22 65
-           C 32 58, 42 57, 47 58 Z"
+  <!-- Left wing — single clean sweep -->
+  <path d="M108 100
+           C 90 86,  56 72,  22 68
+           C 16 70,  16 80,  24 83
+           C 42 80,  70 88, 104 102Z"
         fill="#c9a96e"/>
 
-  <!-- Right wing — smaller, hawk faces right -->
-  <path d="M52 55
-           C 60 49, 72 44, 83 47
-           C 88 50, 87 56, 80 56
-           C 84 61, 82 66, 74 63
-           C 65 58, 57 57, 52 58 Z"
-        fill="#c9a96e"/>
-
-  <!-- Body + tail -->
-  <path d="M47 58 Q50 62 50 72 Q50 62 53 58 Q51 56 50 56 Q49 56 47 58Z" fill="#c9a96e"/>
-
-  <!-- Neck (bridges body to head) -->
-  <path d="M52 55 Q56 50 61 47 Q58 53 55 57 Z" fill="#c9a96e"/>
+  <!-- Body ellipse -->
+  <ellipse cx="126" cy="96" rx="28" ry="13" transform="rotate(-15 126 96)" fill="#c9a96e"/>
 
   <!-- Head -->
-  <circle cx="64" cy="44" r="7" fill="#c9a96e"/>
+  <circle cx="150" cy="79" r="17" fill="#c9a96e"/>
 
   <!-- Hooked beak -->
-  <path d="M70 41 L80 45 L71 51 L70 47 Z" fill="#8a6d3b"/>
+  <path d="M163 72
+           C 182 69, 193 79, 187 88
+           C 182 94, 165 94, 163 89
+           C 165 84, 163 78Z"
+        fill="#8a6d3b"/>
 
   <!-- Eye -->
-  <circle cx="65" cy="43" r="2.2" fill="#0d0b09"/>
-  <circle cx="64.3" cy="42.3" r="0.8" fill="#c9a96e" opacity="0.6"/>
+  <circle cx="155" cy="77" r="5"   fill="#0c0a09"/>
+  <circle cx="153" cy="75" r="1.8" fill="#c9a96e" opacity="0.55"/>
 
-  <!-- ── Submarine ── -->
+  <!-- ── Water line ── -->
+  <path d="M18 124 Q40 116 62 124 Q84 132 106 124 Q128 116 150 124 Q166 131 182 124"
+        fill="none" stroke="#c9a96e" stroke-width="2.2" stroke-linecap="round" opacity="0.5"/>
+
+  <!-- ══════════════════════════════════
+       SUBMARINE
+       ══════════════════════════════════ -->
 
   <!-- Hull -->
-  <path d="M20 77
-           Q24 68 50 67
-           Q73 66 80 72
-           Q85 77 80 82
-           Q60 88 38 87
-           Q18 85 20 77 Z"
+  <path d="M36 153
+           C 40 140, 76 136, 112 136
+           C 150 136, 174 144, 180 154
+           C 174 164, 150 168, 112 168
+           C  76 168,  40 164,  36 153Z"
         fill="#c9a96e"/>
 
   <!-- Conning tower -->
-  <path d="M54 67 L57 59 L66 59 L69 67 Z" fill="#c9a96e"/>
+  <path d="M114 136 L120 119 L138 119 L144 136Z" fill="#c9a96e"/>
 
-  <!-- Periscope -->
-  <line x1="60" y1="59" x2="60" y2="53" stroke="#c9a96e" stroke-width="1.8" stroke-linecap="round"/>
-  <circle cx="60" cy="52" r="1.8" fill="none" stroke="#c9a96e" stroke-width="1.2"/>
-
-  <!-- Water waves -->
-  <path d="M16 76 Q24 71 32 76 Q40 81 48 76 Q56 71 64 76 Q70 80 78 76"
-        fill="none" stroke="#c9a96e" stroke-width="1.3"
-        stroke-linecap="round" opacity="0.45"/>
+  <!-- Periscope + viewport ring -->
+  <line x1="126" y1="119" x2="126" y2="109" stroke="#c9a96e" stroke-width="3"   stroke-linecap="round"/>
+  <circle cx="126" cy="108" r="4" fill="none" stroke="#c9a96e" stroke-width="2"/>
+  <line x1="136" y1="119" x2="136" y2="113" stroke="#c9a96e" stroke-width="2.5" stroke-linecap="round"/>
 
 </svg>
