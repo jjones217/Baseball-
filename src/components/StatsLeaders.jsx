@@ -98,12 +98,11 @@ function getSortConfig(activeDays) {
   };
 }
 
-const isStarter  = (p) => p.position?.abbreviation === 'SP';
-const isReliever = (p) => {
-  const abbr = p.position?.abbreviation;
-  return abbr === 'RP' || abbr === 'P' || (p.position?.type === 'Pitcher' && abbr !== 'SP');
-};
-const isPitcher  = (p) => isStarter(p) || isReliever(p);
+// Starters fetched via STARTER_CATS will have inningsPitched; relievers won't
+const isStarter  = (p) => p.stats.inningsPitched != null;
+// Relievers fetched via RELIEVER_CATS will have saves or holds; starters won't
+const isReliever = (p) => p.stats.saves != null || p.stats.holds != null;
+const isPitcher  = (p) => p.position?.type === 'Pitcher' || p.position?.abbreviation === 'P';
 const isHitter   = (p) => !isPitcher(p);
 
 export default function StatsLeaders({ season, favoriteTeamId }) {
