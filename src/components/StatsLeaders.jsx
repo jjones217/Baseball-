@@ -4,7 +4,7 @@ import { getTeamColors } from '../utils/teamColors';
 
 const HITTER_CATS   = ['battingAverage', 'homeRuns', 'rbi', 'hits', 'stolenBases'];
 const STARTER_CATS  = ['earnedRunAverage', 'wins', 'strikeouts', 'inningsPitched', 'walksAndHitsPerInningPitched'];
-const RELIEVER_CATS = ['saves', 'holds', 'earnedRunAverage', 'strikeouts'];
+const RELIEVER_CATS = ['saves', 'holds', 'earnedRunAverage', 'strikeouts', 'inningsPitched'];
 
 const FILTERS = [
   { label: 'Season',  days: 0  },
@@ -98,8 +98,8 @@ function getSortConfig(activeDays) {
   };
 }
 
-// Starters fetched via STARTER_CATS will have inningsPitched; relievers won't
-const isStarter  = (p) => p.stats.inningsPitched != null;
+// Starters fetched via STARTER_CATS will have wins; relievers won't
+const isStarter  = (p) => p.stats.wins != null;
 // Relievers fetched via RELIEVER_CATS will have saves or holds; starters won't
 const isReliever = (p) => p.stats.saves != null || p.stats.holds != null;
 const isPitcher  = (p) => p.position?.type === 'Pitcher' || p.position?.abbreviation === 'P';
@@ -159,6 +159,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     { key: 'saves',            label: 'SV',  primary: !isShortRange },
     { key: 'strikeouts',       label: 'K',   primary: isShortRange },
     { key: 'holds',            label: 'HLD' },
+    { key: 'inningsPitched',   label: 'IP'  },
     { key: 'earnedRunAverage', label: 'ERA' },
   ];
 
