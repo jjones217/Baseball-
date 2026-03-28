@@ -684,6 +684,33 @@ body {
 }
 
 /* Team picker grid */
+.team-picker-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.team-search {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  padding: 0.45rem 0.75rem;
+  outline: none;
+  width: 100%;
+  max-width: 240px;
+  transition: border-color 0.15s;
+}
+
+.team-search::placeholder {
+  color: var(--text-muted);
+}
+
+.team-search:focus {
+  border-color: var(--gold-dim);
+}
+
 .team-picker {
   display: flex;
   flex-wrap: wrap;

@@ -49,28 +49,42 @@ function ArticleCard({ article }) {
 }
 
 function TeamPicker({ selectedId, onSelect }) {
+  const [query, setQuery] = useState('');
+  const filtered = query.trim()
+    ? ALL_TEAMS.filter((t) => t.name.toLowerCase().includes(query.toLowerCase()))
+    : ALL_TEAMS;
+
   return (
-    <div className="team-picker">
-      {ALL_TEAMS.map((team) => {
-        const isActive = team.id === selectedId;
-        return (
-          <button
-            key={team.id}
-            className={`team-pick-btn ${isActive ? 'active' : ''}`}
-            style={isActive ? { '--pick-color': team.primary, borderColor: team.primary, color: team.primary, background: `${team.primary}18` } : { '--pick-color': team.primary }}
-            onClick={() => onSelect(team.id)}
-          >
-            <img
-              src={`https://www.mlbstatic.com/team-logos/${team.id}.svg`}
-              alt={team.name}
-              width={24}
-              height={24}
-              onError={(e) => { e.target.style.display = 'none'; }}
-            />
-            <span>{team.name}</span>
-          </button>
-        );
-      })}
+    <div className="team-picker-wrap">
+      <input
+        className="team-search"
+        type="text"
+        placeholder="Filter teams…"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <div className="team-picker">
+        {filtered.map((team) => {
+          const isActive = team.id === selectedId;
+          return (
+            <button
+              key={team.id}
+              className={`team-pick-btn ${isActive ? 'active' : ''}`}
+              style={isActive ? { '--pick-color': team.primary, borderColor: team.primary, color: team.primary, background: `${team.primary}18` } : { '--pick-color': team.primary }}
+              onClick={() => onSelect(team.id)}
+            >
+              <img
+                src={`https://www.mlbstatic.com/team-logos/${team.id}.svg`}
+                alt={team.name}
+                width={24}
+                height={24}
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+              <span>{team.name}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
