@@ -38,7 +38,10 @@ function ArticleCard({ article }) {
         />
       )}
       <div className="article-body">
-        <p className="article-date">{formatPubDate(article.pubDate)}</p>
+        <p className="article-date">
+          {article.source && <span className="article-source">{article.source} · </span>}
+          {formatPubDate(article.pubDate)}
+        </p>
         <h3 className="article-title">{article.title}</h3>
         {article.description && (
           <p className="article-desc">{article.description}{article.description.length >= 220 ? '…' : ''}</p>

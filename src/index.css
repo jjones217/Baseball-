@@ -801,8 +801,12 @@ body {
 .article-date {
   font-size: 0.65rem;
   color: var(--text-muted);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.article-source {
+  color: var(--gold-dim);
+  font-weight: 600;
 }
 
 .article-title {
