@@ -3,6 +3,7 @@ import GamesView from './components/GamesView';
 import Standings from './components/Standings';
 import NewsView from './components/NewsView';
 import { getDefaultDate } from './utils/api';
+import { getFavoriteTeamId, setFavoriteTeamId } from './utils/favorites';
 import './App.css';
 
 const CURRENT_SEASON = new Date().getFullYear();
@@ -10,6 +11,12 @@ const CURRENT_SEASON = new Date().getFullYear();
 export default function App() {
   const [tab, setTab] = useState('games');
   const [selectedDate, setSelectedDate] = useState(getDefaultDate());
+  const [favoriteTeamId, setFavoriteTeam] = useState(() => getFavoriteTeamId());
+
+  function handleSetFavorite(teamId) {
+    setFavoriteTeamId(teamId);
+    setFavoriteTeam(teamId);
+  }
 
   return (
     <div className="app">
@@ -53,13 +60,18 @@ export default function App() {
 
       <main className="app-main">
         {tab === 'games' && (
-          <GamesView selectedDate={selectedDate} onDateChange={setSelectedDate} />
+          <GamesView
+            selectedDate={selectedDate}
+            onDateChange={setSelectedDate}
+            favoriteTeamId={favoriteTeamId}
+            onSetFavorite={handleSetFavorite}
+          />
         )}
         {tab === 'standings' && (
           <Standings season={CURRENT_SEASON} />
         )}
         {tab === 'news' && (
-          <NewsView />
+          <NewsView favoriteTeamId={favoriteTeamId} />
         )}
       </main>
 

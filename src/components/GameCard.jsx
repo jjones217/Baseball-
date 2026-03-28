@@ -37,7 +37,20 @@ function StatusBadge({ status }) {
   return <span className={cls}>{label}</span>;
 }
 
-export default function GameCard({ game }) {
+function StarButton({ teamId, isFav, onSetFavorite }) {
+  return (
+    <button
+      className={`star-btn ${isFav ? 'starred' : ''}`}
+      onClick={(e) => { e.stopPropagation(); onSetFavorite(teamId); }}
+      title={isFav ? 'Your favorite team' : 'Set as favorite team'}
+      aria-label={isFav ? 'Favorite team' : 'Set as favorite'}
+    >
+      {isFav ? '★' : '☆'}
+    </button>
+  );
+}
+
+export default function GameCard({ game, isFavorite, favoriteTeamId, onSetFavorite }) {
   const away = game.teams?.away;
   const home = game.teams?.home;
   const awayTeam = away?.team;
@@ -53,22 +66,30 @@ export default function GameCard({ game }) {
   const awayColors = getTeamColors(awayTeam?.id);
   const homeColors = getTeamColors(homeTeam?.id);
 
-  // Determine winner for score highlighting
   const awayWon = isFinal && awayScore > homeScore;
   const homeWon = isFinal && homeScore > awayScore;
 
   const accentColor = awayColors.primary;
 
-  // Game time
+  const favTeamColors = isFavorite
+    ? (awayTeam?.id === favoriteTeamId ? awayColors : homeColors)
+    : null;
+
   const gameTime = game.gameDate
     ? new Date(game.gameDate).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })
     : '';
 
   return (
     <div
-      className="game-card"
-      style={{ '--away-color': awayColors.primary, '--home-color': homeColors.primary }}
+      className={`game-card ${isFavorite ? 'game-card-favorite' : ''}`}
+      style={{
+        '--away-color': awayColors.primary,
+        '--home-color': homeColors.primary,
+        ...(isFavorite && { '--fav-color': favTeamColors.primary }),
+      }}
     >
+      {isFavorite && <div className="fav-bar" style={{ background: favTeamColors.primary }} />}
+
       <div className="card-header">
         <StatusBadge status={status} />
         {!isFinal && !isLive && <span className="game-time">{gameTime}</span>}
@@ -77,7 +98,16 @@ export default function GameCard({ game }) {
       <div className="matchup">
         {/* Away team */}
         <div className={`team-block away ${awayWon ? 'winner' : ''}`}>
-          <TeamLogo teamId={awayTeam?.id} teamName={awayTeam?.name} />
+          <div className="logo-star">
+            <TeamLogo teamId={awayTeam?.id} teamName={awayTeam?.name} />
+            {onSetFavorite && (
+              <StarButton
+                teamId={awayTeam?.id}
+                isFav={awayTeam?.id === favoriteTeamId}
+                onSetFavorite={onSetFavorite}
+              />
+            )}
+          </div>
           <div className="team-info">
             <span className="team-abbr" style={{ color: awayColors.primary }}>{awayTeam?.abbreviation}</span>
             <span className="team-name">{awayTeam?.teamName}</span>
@@ -104,21 +134,23 @@ export default function GameCard({ game }) {
             <span className="team-abbr" style={{ color: homeColors.primary }}>{homeTeam?.abbreviation}</span>
             <span className="team-name">{homeTeam?.teamName}</span>
           </div>
-          <TeamLogo teamId={homeTeam?.id} teamName={homeTeam?.name} />
+          <div className="logo-star logo-star-right">
+            <TeamLogo teamId={homeTeam?.id} teamName={homeTeam?.name} />
+            {onSetFavorite && (
+              <StarButton
+                teamId={homeTeam?.id}
+                isFav={homeTeam?.id === favoriteTeamId}
+                onSetFavorite={onSetFavorite}
+              />
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Linescore */}
       {(isFinal || isLive) && linescore && (
-        <Linescore
-          linescore={linescore}
-          awayTeam={awayTeam}
-          homeTeam={homeTeam}
-          accentColor={accentColor}
-        />
+        <Linescore linescore={linescore} awayTeam={awayTeam} homeTeam={homeTeam} accentColor={accentColor} />
       )}
 
-      {/* Decisions */}
       {isFinal && decisions && (
         <div className="decisions">
           {decisions.winner && (

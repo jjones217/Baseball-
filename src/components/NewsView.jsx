@@ -92,8 +92,8 @@ function TeamPicker({ selectedId, onSelect }) {
   );
 }
 
-export default function NewsView() {
-  const [selectedTeamId, setSelectedTeamId] = useState(147); // Yankees default
+export default function NewsView({ favoriteTeamId }) {
+  const [selectedTeamId, setSelectedTeamId] = useState(favoriteTeamId || 147);
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

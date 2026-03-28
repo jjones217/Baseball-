@@ -284,6 +284,53 @@ body {
   box-shadow: var(--shadow-hover);
 }
 
+.game-card-favorite {
+  border-color: var(--fav-color, var(--gold-dim));
+  box-shadow: 0 0 0 1px var(--fav-color, var(--gold-dim)), var(--shadow-card);
+}
+
+.fav-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  opacity: 0.9;
+}
+
+/* Logo + star wrapper */
+.logo-star {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.logo-star-right {
+  align-items: center;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1;
+  padding: 0.1em 0.2em;
+  color: var(--text-muted);
+  transition: color 0.15s, transform 0.15s;
+}
+
+.star-btn:hover {
+  color: var(--gold);
+  transform: scale(1.2);
+}
+
+.star-btn.starred {
+  color: var(--gold);
+}
+
 .card-header {
   display: flex;
   align-items: center;
