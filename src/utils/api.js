@@ -76,6 +76,23 @@ export async function fetchLeaders(categories, season, { limit = 10, playerPool 
   return Array.from(map.values());
 }
 
+export async function fetchDailyStats(dateStr, season) {
+  // dateStr is YYYY-MM-DD; MLB stats endpoint wants MM/DD/YYYY
+  const [y, m, d] = dateStr.split('-');
+  const mlbDate = `${m}/${d}/${y}`;
+  const base = `${BASE_URL}/stats?stats=byDateRange&gameType=R&startDate=${mlbDate}&endDate=${mlbDate}&season=${season}&hydrate=person,team&limit=100`;
+  const [hRes, pRes] = await Promise.all([
+    fetch(`${base}&group=hitting`),
+    fetch(`${base}&group=pitching`),
+  ]);
+  if (!hRes.ok || !pRes.ok) throw new Error('Daily stats fetch failed');
+  const [hData, pData] = await Promise.all([hRes.json(), pRes.json()]);
+  return {
+    hitting:  hData.stats?.[0]?.splits || [],
+    pitching: pData.stats?.[0]?.splits || [],
+  };
+}
+
 export async function fetchBoxScore(gamePk) {
   const res = await fetch(`${BASE_URL}/game/${gamePk}/boxscore`);
   if (!res.ok) throw new Error(`Box score fetch failed: ${res.status}`);

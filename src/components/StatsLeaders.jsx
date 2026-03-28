@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchLeaders } from '../utils/api';
 import { getTeamColors } from '../utils/teamColors';
+import TopPerformers from './TopPerformers';
 
 const HITTER_CATS   = ['battingAverage', 'homeRuns', 'rbi', 'hits', 'stolenBases'];
 const STARTER_CATS  = ['earnedRunAverage', 'wins', 'strikeouts', 'inningsPitched', 'walksAndHitsPerInningPitched'];
@@ -165,6 +166,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
 
   return (
     <div className="stats-wrap">
+      <TopPerformers season={season} favoriteTeamId={favoriteTeamId} />
       <div className="leaders-filter-bar">
         {FILTERS.map((f) => (
           <button

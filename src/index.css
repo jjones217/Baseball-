@@ -1202,3 +1202,69 @@ body {
     font-size: 1rem;
   }
 }
+
+/* ==========================================
+   Top Performers
+   ========================================== */
+
+.tp-columns {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tp-group {
+  flex: 1;
+  min-width: 260px;
+}
+
+.tp-group-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 0 0 0.4rem 0;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tp-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid rgba(46, 42, 36, 0.4);
+  font-size: 0.82rem;
+}
+
+.tp-row:last-child {
+  border-bottom: none;
+}
+
+.tp-row.fav-row {
+  border-left: 2px solid var(--fav-color, var(--gold));
+  padding-left: 0.4rem;
+}
+
+.tp-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+  flex-shrink: 0;
+}
+
+.tp-team {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+
+.tp-line {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  flex: 1;
+}
