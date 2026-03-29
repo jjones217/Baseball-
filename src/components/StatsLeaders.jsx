@@ -22,12 +22,16 @@ const FILTERS = [
   { label: 'Last 7',  days: 7       },
 ];
 
+const SEASON_START = new Date('2026-03-25T12:00:00');
+
 function getDateRange(days) {
   if (days === 0) return { startDate: '', endDate: '' };
-  const end   = new Date();
-  const start = new Date();
-  start.setDate(end.getDate() - (days - 1));
   const fmt = (d) => `${String(d.getMonth() + 1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
+  const end   = new Date();
+  let   start = new Date();
+  start.setDate(end.getDate() - (days - 1));
+  // Never go before the season start
+  if (start < SEASON_START) start = new Date(SEASON_START);
   return { startDate: fmt(start), endDate: fmt(end) };
 }
 
@@ -169,7 +173,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     const opts  = (extra = {}) => ({ startDate, endDate, playerPool: pool, ...extra });
 
     Promise.all([
-      fetchStatLeaders('hitting',  season, opts()),
+      fetchStatLeaders('hitting',  season, opts({ limit: 400 })),
       fetchStatLeaders('pitching', season, opts({ limit: 300 })),
     ])
       .then(([h, p]) => {

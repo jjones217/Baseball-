@@ -80,13 +80,14 @@ function normalizePitching(s) {
 }
 
 // Returns complete stat lines for all players — no partial-category merging
-export async function fetchStatLeaders(group, season, { limit = 200, playerPool = '', startDate = '', endDate = '' } = {}) {
+export async function fetchStatLeaders(group, season, { limit = 400, playerPool = '', startDate = '', endDate = '' } = {}) {
   const statsType = startDate ? 'byDateRange' : 'season';
   const params = new URLSearchParams({
     stats:    statsType,
     group,
     gameType: 'R',
     season,
+    sportId:  1,
     hydrate:  'person,team',
     limit,
     ...(playerPool && { playerPool }),
