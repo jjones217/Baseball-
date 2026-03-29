@@ -59,7 +59,34 @@ function PlayerRow({ rank, player, cols, favoriteTeamId }) {
   );
 }
 
-function LeaderTable({ title, players, cols, loading, favoriteTeamId }) {
+function LeaderTable({ title, players, cols, loading, favoriteTeamId, limit = 10, defaultSort }) {
+  const [sortKey, setSortKey] = useState(() => defaultSort?.key || cols.find(c => c.primary)?.key || cols[0]?.key);
+  const [sortDir, setSortDir] = useState(() => defaultSort?.dir || 'desc');
+
+  // Reset sort when default changes (tab switch)
+  useEffect(() => {
+    if (defaultSort) {
+      setSortKey(defaultSort.key);
+      setSortDir(defaultSort.dir);
+    }
+  }, [defaultSort?.key, defaultSort?.dir]);
+
+  function handleHeaderClick(col) {
+    if (sortKey === col.key) {
+      setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortKey(col.key);
+      // ERA/WHIP/WHIP-like stats sort ascending by default
+      setSortDir(['earnedRunAverage', 'walksAndHitsPerInningPitched'].includes(col.key) ? 'asc' : 'desc');
+    }
+  }
+
+  const sorted = [...players].sort((a, b) => {
+    const av = parseFloat(a.stats[sortKey]) || 0;
+    const bv = parseFloat(b.stats[sortKey]) || 0;
+    return sortDir === 'asc' ? av - bv : bv - av;
+  }).slice(0, limit);
+
   return (
     <div className="leader-section">
       <h3 className="leader-title">{title}</h3>
@@ -72,14 +99,23 @@ function LeaderTable({ title, players, cols, loading, favoriteTeamId }) {
                 <th className="sl-rank">#</th>
                 <th className="sl-player">Player</th>
                 {cols.map((col) => (
-                  <th key={col.key} className={col.primary ? 'sl-primary' : ''}>{col.label}</th>
+                  <th
+                    key={col.key}
+                    className={`sl-sortable ${sortKey === col.key ? 'sl-sort-active' : ''}`}
+                    onClick={() => handleHeaderClick(col)}
+                  >
+                    {col.label}
+                    {sortKey === col.key && (
+                      <span className="sl-sort-arrow">{sortDir === 'asc' ? ' ▲' : ' ▼'}</span>
+                    )}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {players.length === 0 ? (
+              {sorted.length === 0 ? (
                 <tr><td colSpan={cols.length + 2} className="sl-empty">No data available</td></tr>
-              ) : players.map((p, i) => (
+              ) : sorted.map((p, i) => (
                 <PlayerRow
                   key={p.person?.id ?? i}
                   rank={i + 1}
@@ -134,7 +170,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     setLoading(true);
     setError(null);
     const { startDate, endDate } = getDateRange(activeDays);
-    const opts = (extra = {}) => ({ startDate, endDate, limit: 15, ...extra });
+    const opts = (extra = {}) => ({ startDate, endDate, limit: 25, ...extra });
 
     Promise.all([
       fetchLeaders(HITTER_CATS,   season, opts()),
@@ -142,10 +178,10 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
       fetchLeaders(RELIEVER_CATS, season, opts()),
     ])
       .then(([h, sp, rp]) => {
-        const sc = getSortConfig(activeDays);
-        setHitters(sortBy(h.filter(isHitter),    sc.hitter.key,   sc.hitter.dir).slice(0, 10));
-        setStarters(sortBy(sp.filter(isStarter),  sc.starter.key,  sc.starter.dir).slice(0, 5));
-        setRelievers(sortBy(rp.filter(isReliever),sc.reliever.key, sc.reliever.dir).slice(0, 5));
+        // Store full pools — LeaderTable handles sorting and slicing
+        setHitters(h.filter(isHitter));
+        setStarters(sp.filter(isStarter));
+        setRelievers(rp.filter(isReliever));
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
@@ -239,19 +275,12 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
       ) : (
         <>
           {error && <div className="error">{error}</div>}
-          <LeaderTable title="Top 10 Hitters"           players={applyFilters(hitters)}   cols={hitterCols}   loading={loading} favoriteTeamId={favoriteTeamId} />
-          <LeaderTable title="Top 5 Starting Pitchers"  players={applyFilters(starters)}  cols={starterCols}  loading={loading} favoriteTeamId={favoriteTeamId} />
-          <LeaderTable title="Top 5 Relievers"          players={applyFilters(relievers)} cols={relieverCols} loading={loading} favoriteTeamId={favoriteTeamId} />
+          <LeaderTable title="Top 10 Hitters"          players={applyFilters(hitters)}   cols={hitterCols}   loading={loading} favoriteTeamId={favoriteTeamId} limit={10} defaultSort={getSortConfig(activeDays).hitter} />
+          <LeaderTable title="Top 5 Starting Pitchers" players={applyFilters(starters)}  cols={starterCols}  loading={loading} favoriteTeamId={favoriteTeamId} limit={5}  defaultSort={getSortConfig(activeDays).starter} />
+          <LeaderTable title="Top 5 Relievers"         players={applyFilters(relievers)} cols={relieverCols} loading={loading} favoriteTeamId={favoriteTeamId} limit={5}  defaultSort={getSortConfig(activeDays).reliever} />
         </>
       )}
     </div>
   );
 }
 
-function sortBy(players, statKey, dir) {
-  return [...players].sort((a, b) => {
-    const av = parseFloat(a.stats[statKey]) || 0;
-    const bv = parseFloat(b.stats[statKey]) || 0;
-    return dir === 'asc' ? av - bv : bv - av;
-  });
-}

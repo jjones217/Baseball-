@@ -1475,3 +1475,23 @@ body {
 .leaders-select option {
   background: #1a1612;
 }
+
+.sl-sortable {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.sl-sortable:hover {
+  color: var(--text-primary);
+}
+
+.sl-sort-active {
+  color: var(--gold) !important;
+}
+
+.sl-sort-arrow {
+  font-size: 0.6rem;
+  opacity: 0.8;
+}
