@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchLeaders } from '../utils/api';
+import { fetchStatLeaders } from '../utils/api';
 import { getTeamColors, teamColors } from '../utils/teamColors';
 import TopPerformers from './TopPerformers';
 
@@ -14,10 +14,6 @@ function normalizePos(abbr) {
   if (['LF', 'CF', 'RF'].includes(abbr)) return 'OF';
   return abbr;
 }
-
-const HITTER_CATS   = ['battingAverage', 'homeRuns', 'rbi', 'hits', 'stolenBases'];
-const STARTER_CATS  = ['earnedRunAverage', 'wins', 'strikeouts', 'inningsPitched', 'walksAndHitsPerInningPitched'];
-const RELIEVER_CATS = ['saves', 'holds', 'earnedRunAverage', 'strikeouts', 'inningsPitched'];
 
 const FILTERS = [
   { label: 'Daily',   days: 'daily' },
@@ -148,12 +144,11 @@ function getSortConfig(activeDays) {
   };
 }
 
-// Starters fetched via STARTER_CATS will have wins; relievers won't
-const isStarter  = (p) => p.stats.wins != null;
-// Relievers fetched via RELIEVER_CATS will have saves or holds; starters won't
-const isReliever = (p) => p.stats.saves != null || p.stats.holds != null;
-const isPitcher  = (p) => p.position?.type === 'Pitcher' || p.position?.abbreviation === 'P';
+const isPitcher  = (p) => p.position?.type === 'Pitcher';
 const isHitter   = (p) => !isPitcher(p);
+// Use gamesStarted to separate starters from relievers
+const isStarter  = (p) => isPitcher(p) && Number(p.stats.gamesStarted || 0) > 0;
+const isReliever = (p) => isPitcher(p) && Number(p.stats.gamesStarted || 0) === 0;
 
 export default function StatsLeaders({ season, favoriteTeamId }) {
   const [activeDays, setActiveDays] = useState('daily');
@@ -170,18 +165,17 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     setLoading(true);
     setError(null);
     const { startDate, endDate } = getDateRange(activeDays);
-    const opts = (extra = {}) => ({ startDate, endDate, limit: 25, ...extra });
+    const pool  = activeDays === 0 ? 'qualified' : '';
+    const opts  = (extra = {}) => ({ startDate, endDate, playerPool: pool, ...extra });
 
     Promise.all([
-      fetchLeaders(HITTER_CATS,   season, opts()),
-      fetchLeaders(STARTER_CATS,  season, opts({ playerPool: activeDays === 0 ? 'qualified' : '' })),
-      fetchLeaders(RELIEVER_CATS, season, opts()),
+      fetchStatLeaders('hitting',  season, opts()),
+      fetchStatLeaders('pitching', season, opts({ limit: 300 })),
     ])
-      .then(([h, sp, rp]) => {
-        // Store full pools — LeaderTable handles sorting and slicing
+      .then(([h, p]) => {
         setHitters(h.filter(isHitter));
-        setStarters(sp.filter(isStarter));
-        setRelievers(rp.filter(isReliever));
+        setStarters(p.filter(isStarter));
+        setRelievers(p.filter(isReliever));
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));

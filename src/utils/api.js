@@ -46,34 +46,62 @@ export function classifyDate(dateStr) {
   return 'other';
 }
 
-export async function fetchLeaders(categories, season, { limit = 10, playerPool = '', startDate = '', endDate = '' } = {}) {
-  const params = new URLSearchParams({
-    leaderCategories: categories.join(','),
-    season,
-    sportId: 1,
-    limit,
-    hydrate: 'person,team',
-    leaderGameTypes: 'R',
-    ...(playerPool  && { playerPool }),
-    ...(startDate   && { startDate }),
-    ...(endDate     && { endDate }),
-  });
-  const res = await fetch(`${BASE_URL}/stats/leaders?${params}`);
-  if (!res.ok) throw new Error(`Leaders fetch failed: ${res.status}`);
-  const data = await res.json();
+function normalizeHitting(s) {
+  return {
+    battingAverage: s.avg          ?? s.battingAverage,
+    homeRuns:       s.homeRuns,
+    rbi:            s.rbi,
+    hits:           s.hits,
+    stolenBases:    s.stolenBases,
+    baseOnBalls:    s.baseOnBalls,
+    atBats:         s.atBats,
+    doubles:        s.doubles,
+    triples:        s.triples,
+    gamesPlayed:    s.gamesPlayed,
+  };
+}
 
-  // Build a map: { personId -> { person, team, stats: { category: value } } }
-  const map = new Map();
-  for (const board of data.leagueLeaders || []) {
-    const cat = board.leaderCategory;
-    for (const entry of board.leaders || []) {
-      const id = entry.person?.id;
-      if (!id) continue;
-      if (!map.has(id)) map.set(id, { person: entry.person, team: entry.team, position: entry.person?.primaryPosition, stats: {} });
-      map.get(id).stats[cat] = entry.value;
-    }
-  }
-  return Array.from(map.values());
+function normalizePitching(s) {
+  return {
+    earnedRunAverage:             s.era  ?? s.earnedRunAverage,
+    wins:                         s.wins,
+    strikeouts:                   s.strikeOuts ?? s.strikeouts,
+    inningsPitched:               s.inningsPitched,
+    walksAndHitsPerInningPitched: s.whip ?? s.walksAndHitsPerInningPitched,
+    saves:                        s.saves,
+    holds:                        s.holds,
+    earnedRuns:                   s.earnedRuns,
+    gamesStarted:                 s.gamesStarted,
+    gamesPlayed:                  s.gamesPitched ?? s.gamesPlayed,
+    baseOnBalls:                  s.baseOnBalls,
+    hits:                         s.hits,
+    runs:                         s.runs,
+  };
+}
+
+// Returns complete stat lines for all players — no partial-category merging
+export async function fetchStatLeaders(group, season, { limit = 200, playerPool = '', startDate = '', endDate = '' } = {}) {
+  const statsType = startDate ? 'byDateRange' : 'season';
+  const params = new URLSearchParams({
+    stats:    statsType,
+    group,
+    gameType: 'R',
+    season,
+    hydrate:  'person,team',
+    limit,
+    ...(playerPool && { playerPool }),
+    ...(startDate  && { startDate }),
+    ...(endDate    && { endDate }),
+  });
+  const res = await fetch(`${BASE_URL}/stats?${params}`);
+  if (!res.ok) throw new Error(`Stats fetch failed: ${res.status}`);
+  const data = await res.json();
+  return (data.stats?.[0]?.splits || []).map(split => ({
+    person:   split.player,
+    team:     split.team,
+    position: split.player?.primaryPosition,
+    stats:    group === 'hitting' ? normalizeHitting(split.stat) : normalizePitching(split.stat),
+  }));
 }
 
 export async function fetchDailyStats(dateStr, season) {
