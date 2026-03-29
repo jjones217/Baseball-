@@ -82,18 +82,12 @@ function normalizePitching(s) {
 // Returns complete stat lines for all players — no partial-category merging
 export async function fetchStatLeaders(group, season, { limit = 400, playerPool = '', startDate = '', endDate = '' } = {}) {
   const statsType = startDate ? 'byDateRange' : 'season';
-  const params = new URLSearchParams({
-    stats:    statsType,
-    gameType: 'R',
-    season,
-    hydrate:  'person,team',
-    limit,
-    ...(playerPool && { playerPool }),
-    ...(startDate  && { startDate }),
-    ...(endDate    && { endDate }),
-  });
-  // Append group last — mirrors fetchDailyStats which appends &group= after the base URL
-  const res = await fetch(`${BASE_URL}/stats?${params}&group=${group}`);
+  // Build URL manually — URLSearchParams encodes '/' and ',' which breaks MLB API date and hydrate params
+  let url = `${BASE_URL}/stats?stats=${statsType}&gameType=R&season=${season}&hydrate=person,team&limit=${limit}&group=${group}`;
+  if (playerPool) url += `&playerPool=${playerPool}`;
+  if (startDate)  url += `&startDate=${startDate}`;
+  if (endDate)    url += `&endDate=${endDate}`;
+  const res = await fetch(url);
   if (!res.ok) throw new Error(`Stats fetch failed: ${res.status}`);
   const data = await res.json();
 
