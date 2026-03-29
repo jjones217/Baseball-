@@ -8,7 +8,7 @@ const STARTER_CATS  = ['earnedRunAverage', 'wins', 'strikeouts', 'inningsPitched
 const RELIEVER_CATS = ['saves', 'holds', 'earnedRunAverage', 'strikeouts', 'inningsPitched'];
 
 const FILTERS = [
-  { label: 'Today',   days: 'today' },
+  { label: 'Daily',   days: 'daily' },
   { label: 'Season',  days: 0       },
   { label: 'Last 30', days: 30      },
   { label: 'Last 7',  days: 7       },
@@ -108,7 +108,7 @@ const isPitcher  = (p) => p.position?.type === 'Pitcher' || p.position?.abbrevia
 const isHitter   = (p) => !isPitcher(p);
 
 export default function StatsLeaders({ season, favoriteTeamId }) {
-  const [activeDays, setActiveDays] = useState('today');
+  const [activeDays, setActiveDays] = useState('daily');
   const [hitters,    setHitters]    = useState([]);
   const [starters,   setStarters]   = useState([]);
   const [relievers,  setRelievers]  = useState([]);
@@ -116,7 +116,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
   const [error,      setError]      = useState(null);
 
   useEffect(() => {
-    if (activeDays === 'today') return; // handled by TopPerformers
+    if (activeDays === 'daily') return; // handled by TopPerformers
     setLoading(true);
     setError(null);
     const { startDate, endDate } = getDateRange(activeDays);
@@ -180,7 +180,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
         ))}
       </div>
 
-      {activeDays === 'today' ? (
+      {activeDays === 'daily' ? (
         <TopPerformers season={season} favoriteTeamId={favoriteTeamId} />
       ) : (
         <>

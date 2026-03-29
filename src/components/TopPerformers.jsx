@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchDailyStats, formatDate } from '../utils/api';
+import { fetchDailyStats, formatDate, parseLocalDate } from '../utils/api';
 import { getTeamColors } from '../utils/teamColors';
 
 function hitterScore(s) {
@@ -49,13 +49,20 @@ export default function TopPerformers({ season, favoriteTeamId }) {
   const [pitchers, setPitchers] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState(null);
-  const [date,     setDate]     = useState('');
+  const [date,     setDate]     = useState(() => formatDate(new Date()));
+
+  const today = formatDate(new Date());
+
+  function changeDate(delta) {
+    const d = parseLocalDate(date);
+    d.setDate(d.getDate() + delta);
+    setDate(formatDate(d));
+  }
 
   useEffect(() => {
-    const today = formatDate(new Date());
-    setDate(today);
     setLoading(true);
-    fetchDailyStats(today, season)
+    setError(null);
+    fetchDailyStats(date, season)
       .then(({ hitting, pitching }) => {
         const topHitters = hitting
           .filter(s => (s.stat?.atBats || 0) >= 1)
@@ -72,29 +79,37 @@ export default function TopPerformers({ season, favoriteTeamId }) {
       })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
-  }, [season]);
+  }, [date, season]);
 
-  const label = date ? new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Today';
+  const label = date
+    ? new Date(date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+    : '—';
+
+  const dateNav = (
+    <div className="date-nav" style={{ paddingTop: '0.5rem', paddingBottom: '0.25rem' }}>
+      <button className="date-btn" onClick={() => changeDate(-1)}>‹</button>
+      <span className="date-label">{label}</span>
+      <button className="date-btn" onClick={() => changeDate(1)} disabled={date >= today}>›</button>
+    </div>
+  );
 
   if (loading) return (
     <div className="leader-section">
-      <h3 className="leader-title">Top Performers — {label}</h3>
+      {dateNav}
       <div className="loading" style={{ padding: '1.5rem 0' }}><div className="spinner" /> Loading…</div>
     </div>
   );
 
-  if (error) return null; // silently skip if no data for today
-
-  if (hitters.length === 0 && pitchers.length === 0) return (
+  if (error || (hitters.length === 0 && pitchers.length === 0)) return (
     <div className="leader-section">
-      <h3 className="leader-title">Top Performers — {label}</h3>
-      <p className="sl-empty" style={{ padding: '1rem 0' }}>No games played yet today.</p>
+      {dateNav}
+      <p className="sl-empty" style={{ padding: '1rem 0' }}>No data available for this date.</p>
     </div>
   );
 
   return (
     <div className="leader-section tp-section">
-      <h3 className="leader-title">Top Performers — {label}</h3>
+      {dateNav}
       <div className="tp-columns">
         {hitters.length > 0 && (
           <div className="tp-group">
