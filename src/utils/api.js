@@ -87,12 +87,9 @@ export async function fetchStatLeaders(group, season, { limit = 400, playerPool 
   if (playerPool) url += `&playerPool=${playerPool}`;
   if (startDate)  url += `&startDate=${startDate}`;
   if (endDate)    url += `&endDate=${endDate}`;
-  console.log('[fetchStatLeaders] url:', url);
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Stats fetch failed: ${res.status}`);
   const data = await res.json();
-
-  console.log('[fetchStatLeaders] data.stats length:', data.stats?.length, 'entries:', data.stats?.map(s => `${s.type?.displayName}/${s.group?.displayName}:${s.splits?.length}`));
 
   // Collect splits from all stats entries (response index can vary by group/type)
   const splits = (data.stats || []).flatMap(s => s.splits || []);
@@ -112,9 +109,6 @@ export async function fetchStatLeaders(group, season, { limit = 400, playerPool 
     position: split.player?.primaryPosition,
     stats:    group === 'hitting' ? normalizeHitting(split.stat) : normalizePitching(split.stat),
   }));
-  const allTeamIds = [...new Set(result.map(p => p.team?.id))].sort((a,b) => a-b);
-  console.log(`[fetchStatLeaders] group=${group} total=${result.length} teams represented:`, allTeamIds);
-  console.log(`[fetchStatLeaders] team 118 (Royals) players:`, result.filter(p => p.team?.id === 118).map(p => p.person?.fullName));
   return result;
 }
 
