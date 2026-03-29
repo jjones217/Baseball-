@@ -170,15 +170,16 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     setError(null);
     const { startDate, endDate } = getDateRange(activeDays);
     const isDateRange = activeDays !== 0;
-    const pool   = isDateRange ? '' : 'qualified';
-    // For date-range tabs, pass teamId directly so the API returns all
-    // players from that team regardless of the global limit
-    const teamId = isDateRange && teamFilter ? teamFilter : '';
-    const opts   = (extra = {}) => ({ startDate, endDate, playerPool: pool, teamId, ...extra });
+    const pool = isDateRange ? '' : 'qualified';
+    const opts = (extra = {}) => ({ startDate, endDate, playerPool: pool, ...extra });
+
+    // For date ranges use a high limit to capture every player regardless of team
+    const hLimit = isDateRange ? 1500 : 400;
+    const pLimit = isDateRange ? 800  : 300;
 
     Promise.all([
-      fetchStatLeaders('hitting',  season, opts({ limit: 400 })),
-      fetchStatLeaders('pitching', season, opts({ limit: 300 })),
+      fetchStatLeaders('hitting',  season, opts({ limit: hLimit })),
+      fetchStatLeaders('pitching', season, opts({ limit: pLimit })),
     ])
       .then(([h, p]) => {
         setHitters(h.filter(isHitter));
@@ -187,7 +188,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [season, activeDays, teamFilter]);
+  }, [season, activeDays]);
 
   const isShortRange = activeDays === 7;
 
