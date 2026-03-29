@@ -84,20 +84,32 @@ export async function fetchStatLeaders(group, season, { limit = 400, playerPool 
   const statsType = startDate ? 'byDateRange' : 'season';
   const params = new URLSearchParams({
     stats:    statsType,
-    group,
     gameType: 'R',
     season,
-    sportId:  1,
     hydrate:  'person,team',
     limit,
     ...(playerPool && { playerPool }),
     ...(startDate  && { startDate }),
     ...(endDate    && { endDate }),
   });
-  const res = await fetch(`${BASE_URL}/stats?${params}`);
+  // Append group last — mirrors fetchDailyStats which appends &group= after the base URL
+  const res = await fetch(`${BASE_URL}/stats?${params}&group=${group}`);
   if (!res.ok) throw new Error(`Stats fetch failed: ${res.status}`);
   const data = await res.json();
-  return (data.stats?.[0]?.splits || []).map(split => ({
+
+  // Collect splits from all stats entries (response index can vary by group/type)
+  const splits = (data.stats || []).flatMap(s => s.splits || []);
+
+  // Deduplicate by player ID (byDateRange can return multiple rows per player)
+  const seen = new Set();
+  const unique = splits.filter(split => {
+    const id = split.player?.id;
+    if (!id || seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+
+  return unique.map(split => ({
     person:   split.player,
     team:     split.team,
     position: split.player?.primaryPosition,
