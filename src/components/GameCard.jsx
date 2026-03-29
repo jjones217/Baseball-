@@ -173,7 +173,13 @@ export default function GameCard({ game, isFavorite, favoriteTeamId, onSetFavori
       )}
 
       {lineupExpanded && !isFinal && !isLive && (
-        <Lineup game={game} />
+        <Lineup
+          gamePk={game.gamePk}
+          awayTeam={awayTeam}
+          homeTeam={homeTeam}
+          awayProbable={away?.probablePitcher}
+          homeProbable={home?.probablePitcher}
+        />
       )}
 
       {expanded && (isFinal || isLive) && (

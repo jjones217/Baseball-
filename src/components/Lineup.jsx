@@ -1,25 +1,37 @@
+import { useState, useEffect } from 'react';
+import { fetchBoxScore } from '../utils/api';
 import { getTeamColors } from '../utils/teamColors';
 
-function LineupColumn({ players, team, probablePitcher }) {
+function buildBatters(teamData) {
+  const players = teamData?.players || {};
+  const batterIds = teamData?.batters || [];
+  return batterIds
+    .map((id) => players[`ID${id}`])
+    .filter(Boolean)
+    .filter((p) => p.battingOrder)
+    .filter((p) => String(p.battingOrder).endsWith('0')) // starters only, not subs
+    .sort((a, b) => Number(a.battingOrder) - Number(b.battingOrder));
+}
+
+function LineupColumn({ teamData, team, probablePitcher }) {
   const colors = getTeamColors(team?.id);
+  const batters = buildBatters(teamData);
+
   return (
     <div className="lineup-col">
       <div className="lineup-team-name" style={{ color: colors.primary }}>
         {team?.teamName || team?.name}
       </div>
-      {players && players.length > 0 ? (
+      {batters.length > 0 ? (
         <ol className="lineup-list">
-          {players.map((p, i) => {
-            const name = p.fullName ?? p.person?.fullName ?? '—';
-            const pos  = p.position?.abbreviation ?? p.primaryPosition?.abbreviation ?? '—';
-            const key  = p.id ?? p.person?.id ?? i;
-            return (
-              <li key={key} className="lineup-row">
-                <span className="lineup-pos" style={{ color: colors.primary }}>{pos}</span>
-                <span className="lineup-name">{name}</span>
-              </li>
-            );
-          })}
+          {batters.map((p) => (
+            <li key={p.person?.id} className="lineup-row">
+              <span className="lineup-pos" style={{ color: colors.primary }}>
+                {p.position?.abbreviation || '—'}
+              </span>
+              <span className="lineup-name">{p.person?.fullName}</span>
+            </li>
+          ))}
         </ol>
       ) : (
         <p className="lineup-tbd">Lineup not yet posted</p>
@@ -34,21 +46,26 @@ function LineupColumn({ players, team, probablePitcher }) {
   );
 }
 
-export default function Lineup({ game }) {
-  const lineups = game.lineups;
-  // MLB API uses awayTeam/homeTeam keys; fallback to away/home
-  const awayPlayers = lineups?.awayTeam ?? lineups?.away;
-  const homePlayers = lineups?.homeTeam ?? lineups?.home;
-  const awayTeam = game.teams?.away?.team;
-  const homeTeam = game.teams?.home?.team;
-  const awayProbable = game.teams?.away?.probablePitcher;
-  const homeProbable = game.teams?.home?.probablePitcher;
+export default function Lineup({ gamePk, awayTeam, homeTeam, awayProbable, homeProbable }) {
+  const [data,    setData]    = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState(null);
+
+  useEffect(() => {
+    fetchBoxScore(gamePk)
+      .then(setData)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [gamePk]);
+
+  if (loading) return <div className="loading" style={{ padding: '1rem' }}><div className="spinner" /> Loading lineup…</div>;
+  if (error)   return <div className="lineup-wrap"><p className="lineup-tbd">Lineup not available</p></div>;
 
   return (
     <div className="lineup-wrap">
-      <LineupColumn players={awayPlayers} team={awayTeam} probablePitcher={awayProbable} />
+      <LineupColumn teamData={data?.teams?.away} team={awayTeam} probablePitcher={awayProbable} />
       <div className="lineup-divider" />
-      <LineupColumn players={homePlayers} team={homeTeam} probablePitcher={homeProbable} />
+      <LineupColumn teamData={data?.teams?.home} team={homeTeam} probablePitcher={homeProbable} />
     </div>
   );
 }

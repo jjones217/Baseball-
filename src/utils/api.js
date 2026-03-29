@@ -1,7 +1,7 @@
 const BASE_URL = 'https://statsapi.mlb.com/api/v1';
 
 export async function fetchSchedule(date) {
-  const url = `${BASE_URL}/schedule?sportId=1&date=${date}&hydrate=linescore,decisions,team,probablePitcher,lineups`;
+  const url = `${BASE_URL}/schedule?sportId=1&date=${date}&hydrate=linescore,decisions,team,probablePitcher`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Schedule fetch failed: ${res.status}`);
   const data = await res.json();
