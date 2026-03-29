@@ -1,7 +1,19 @@
 import { useState, useEffect } from 'react';
 import { fetchLeaders } from '../utils/api';
-import { getTeamColors } from '../utils/teamColors';
+import { getTeamColors, teamColors } from '../utils/teamColors';
 import TopPerformers from './TopPerformers';
+
+const TEAM_LIST = Object.entries(teamColors)
+  .map(([id, t]) => ({ id: Number(id), abbr: t.name }))
+  .sort((a, b) => a.abbr.localeCompare(b.abbr));
+
+const POS_OPTIONS = ['C', '1B', '2B', '3B', 'SS', 'OF', 'DH'];
+
+function normalizePos(abbr) {
+  if (!abbr) return '';
+  if (['LF', 'CF', 'RF'].includes(abbr)) return 'OF';
+  return abbr;
+}
 
 const HITTER_CATS   = ['battingAverage', 'homeRuns', 'rbi', 'hits', 'stolenBases'];
 const STARTER_CATS  = ['earnedRunAverage', 'wins', 'strikeouts', 'inningsPitched', 'walksAndHitsPerInningPitched'];
@@ -114,6 +126,8 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
   const [relievers,  setRelievers]  = useState([]);
   const [loading,    setLoading]    = useState(true);
   const [error,      setError]      = useState(null);
+  const [teamFilter, setTeamFilter] = useState('');
+  const [posFilter,  setPosFilter]  = useState('');
 
   useEffect(() => {
     if (activeDays === 'daily') return; // handled by TopPerformers
@@ -166,6 +180,39 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     { key: 'earnedRunAverage', label: 'ERA' },
   ];
 
+  function applyFilters(players) {
+    return players.filter((p) => {
+      if (teamFilter && p.team?.id !== Number(teamFilter)) return false;
+      if (posFilter && normalizePos(p.position?.abbreviation) !== posFilter) return false;
+      return true;
+    });
+  }
+
+  const filterBar = (
+    <div className="leaders-dropdown-bar">
+      <select
+        className="leaders-select"
+        value={teamFilter}
+        onChange={(e) => setTeamFilter(e.target.value)}
+      >
+        <option value="">All Teams</option>
+        {TEAM_LIST.map((t) => (
+          <option key={t.id} value={t.id}>{t.abbr}</option>
+        ))}
+      </select>
+      <select
+        className="leaders-select"
+        value={posFilter}
+        onChange={(e) => setPosFilter(e.target.value)}
+      >
+        <option value="">All Positions</option>
+        {POS_OPTIONS.map((p) => (
+          <option key={p} value={p}>{p}</option>
+        ))}
+      </select>
+    </div>
+  );
+
   return (
     <div className="stats-wrap">
       <div className="leaders-filter-bar">
@@ -180,14 +227,21 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
         ))}
       </div>
 
+      {filterBar}
+
       {activeDays === 'daily' ? (
-        <TopPerformers season={season} favoriteTeamId={favoriteTeamId} />
+        <TopPerformers
+          season={season}
+          favoriteTeamId={favoriteTeamId}
+          teamFilter={teamFilter}
+          posFilter={posFilter}
+        />
       ) : (
         <>
           {error && <div className="error">{error}</div>}
-          <LeaderTable title="Top 10 Hitters"           players={hitters}   cols={hitterCols}   loading={loading} favoriteTeamId={favoriteTeamId} />
-          <LeaderTable title="Top 5 Starting Pitchers"  players={starters}  cols={starterCols}  loading={loading} favoriteTeamId={favoriteTeamId} />
-          <LeaderTable title="Top 5 Relievers"          players={relievers} cols={relieverCols} loading={loading} favoriteTeamId={favoriteTeamId} />
+          <LeaderTable title="Top 10 Hitters"           players={applyFilters(hitters)}   cols={hitterCols}   loading={loading} favoriteTeamId={favoriteTeamId} />
+          <LeaderTable title="Top 5 Starting Pitchers"  players={applyFilters(starters)}  cols={starterCols}  loading={loading} favoriteTeamId={favoriteTeamId} />
+          <LeaderTable title="Top 5 Relievers"          players={applyFilters(relievers)} cols={relieverCols} loading={loading} favoriteTeamId={favoriteTeamId} />
         </>
       )}
     </div>

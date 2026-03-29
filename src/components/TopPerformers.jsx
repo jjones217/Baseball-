@@ -44,7 +44,13 @@ function PerformerRow({ name, team, line, favoriteTeamId }) {
   );
 }
 
-export default function TopPerformers({ season, favoriteTeamId }) {
+function normalizePos(abbr) {
+  if (!abbr) return '';
+  if (['LF', 'CF', 'RF'].includes(abbr)) return 'OF';
+  return abbr;
+}
+
+export default function TopPerformers({ season, favoriteTeamId, teamFilter = '', posFilter = '' }) {
   const [hitters,  setHitters]  = useState([]);
   const [pitchers, setPitchers] = useState([]);
   const [loading,  setLoading]  = useState(true);
@@ -107,14 +113,29 @@ export default function TopPerformers({ season, favoriteTeamId }) {
     </div>
   );
 
+  const visibleHitters = hitters.filter((s) => {
+    if (teamFilter && s.team?.id !== Number(teamFilter)) return false;
+    if (posFilter)  {
+      const pos = normalizePos(s.player?.primaryPosition?.abbreviation);
+      if (pos !== posFilter) return false;
+    }
+    return true;
+  });
+
+  const visiblePitchers = pitchers.filter((s) => {
+    if (teamFilter && s.team?.id !== Number(teamFilter)) return false;
+    // posFilter for pitchers: skip non-pitcher pos options (C/1B/etc.)
+    return true;
+  });
+
   return (
     <div className="leader-section tp-section">
       {dateNav}
       <div className="tp-columns">
-        {hitters.length > 0 && (
+        {visibleHitters.length > 0 && (
           <div className="tp-group">
             <div className="tp-group-label">Hitters</div>
-            {hitters.map((s, i) => (
+            {visibleHitters.map((s, i) => (
               <PerformerRow
                 key={s.player?.id ?? i}
                 name={s.player?.fullName}
@@ -125,10 +146,10 @@ export default function TopPerformers({ season, favoriteTeamId }) {
             ))}
           </div>
         )}
-        {pitchers.length > 0 && (
+        {visiblePitchers.length > 0 && (
           <div className="tp-group">
             <div className="tp-group-label">Pitchers</div>
-            {pitchers.map((s, i) => (
+            {visiblePitchers.map((s, i) => (
               <PerformerRow
                 key={s.player?.id ?? i}
                 name={s.player?.fullName}
