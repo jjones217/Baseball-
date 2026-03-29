@@ -112,7 +112,9 @@ export async function fetchStatLeaders(group, season, { limit = 400, playerPool 
     position: split.player?.primaryPosition,
     stats:    group === 'hitting' ? normalizeHitting(split.stat) : normalizePitching(split.stat),
   }));
-  console.log(`[fetchStatLeaders] group=${group} total splits=${splits.length} unique=${result.length} sample teamIds=`, result.slice(0,5).map(p => p.team?.id));
+  const allTeamIds = [...new Set(result.map(p => p.team?.id))].sort((a,b) => a-b);
+  console.log(`[fetchStatLeaders] group=${group} total=${result.length} teams represented:`, allTeamIds);
+  console.log(`[fetchStatLeaders] team 118 (Royals) players:`, result.filter(p => p.team?.id === 118).map(p => p.person?.fullName));
   return result;
 }
 
