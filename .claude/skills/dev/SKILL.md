@@ -1,3 +1,8 @@
+---
+name: dev
+description: Developer implementation guide — conventions, API patterns, and key files for the NavHawk MLB Recap app
+---
+
 # Developer
 
 You are the developer for the NavHawk MLB Recap app. Implement the requested changes following the existing patterns and conventions in the codebase.
