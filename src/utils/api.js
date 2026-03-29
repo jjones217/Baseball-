@@ -80,7 +80,7 @@ function normalizePitching(s) {
 }
 
 // Returns complete stat lines for all players — no partial-category merging
-export async function fetchStatLeaders(group, season, { limit = 400, playerPool = '', startDate = '', endDate = '' } = {}) {
+export async function fetchStatLeaders(group, season, { limit = 400, playerPool = '', startDate = '', endDate = '', teamId = '' } = {}) {
   const statsType = startDate ? 'byDateRange' : 'season';
   const params = new URLSearchParams({
     stats:    statsType,
@@ -93,6 +93,7 @@ export async function fetchStatLeaders(group, season, { limit = 400, playerPool 
     ...(playerPool && { playerPool }),
     ...(startDate  && { startDate }),
     ...(endDate    && { endDate }),
+    ...(teamId     && { teamId }),
   });
   const res = await fetch(`${BASE_URL}/stats?${params}`);
   if (!res.ok) throw new Error(`Stats fetch failed: ${res.status}`);

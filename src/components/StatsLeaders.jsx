@@ -165,12 +165,16 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
   const [posFilter,  setPosFilter]  = useState('');
 
   useEffect(() => {
-    if (activeDays === 'daily') return; // handled by TopPerformers
+    if (activeDays === 'daily') return;
     setLoading(true);
     setError(null);
     const { startDate, endDate } = getDateRange(activeDays);
-    const pool  = activeDays === 0 ? 'qualified' : '';
-    const opts  = (extra = {}) => ({ startDate, endDate, playerPool: pool, ...extra });
+    const isDateRange = activeDays !== 0;
+    const pool   = isDateRange ? '' : 'qualified';
+    // For date-range tabs, pass teamId directly so the API returns all
+    // players from that team regardless of the global limit
+    const teamId = isDateRange && teamFilter ? teamFilter : '';
+    const opts   = (extra = {}) => ({ startDate, endDate, playerPool: pool, teamId, ...extra });
 
     Promise.all([
       fetchStatLeaders('hitting',  season, opts({ limit: 400 })),
@@ -183,7 +187,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [season, activeDays]);
+  }, [season, activeDays, teamFilter]);
 
   const isShortRange = activeDays === 7;
 
