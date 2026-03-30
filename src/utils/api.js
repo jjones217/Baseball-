@@ -79,6 +79,13 @@ function normalizePitching(s) {
   };
 }
 
+// Shared position normalizer — maps LF/CF/RF → OF for filter consistency
+export function normalizePos(abbr) {
+  if (!abbr) return '';
+  if (['LF', 'CF', 'RF'].includes(abbr)) return 'OF';
+  return abbr;
+}
+
 // Fetches the regular season start date from the MLB Seasons API.
 // Uses regularSeasonStartDate — the authoritative source, excludes spring training.
 export async function fetchSeasonStart(season) {

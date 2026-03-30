@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchStatLeaders, fetchSeasonStart } from '../utils/api';
+import { fetchStatLeaders, fetchSeasonStart, normalizePos } from '../utils/api';
 import { getTeamColors, teamColors } from '../utils/teamColors';
 import TopPerformers from './TopPerformers';
 
@@ -9,11 +9,6 @@ const TEAM_LIST = Object.entries(teamColors)
 
 const POS_OPTIONS = ['C', '1B', '2B', '3B', 'SS', 'OF', 'DH'];
 
-function normalizePos(abbr) {
-  if (!abbr) return '';
-  if (['LF', 'CF', 'RF'].includes(abbr)) return 'OF';
-  return abbr;
-}
 
 const FILTERS = [
   { label: 'Daily',   days: 'daily' },

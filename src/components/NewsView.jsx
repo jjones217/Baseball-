@@ -44,7 +44,7 @@ function ArticleCard({ article }) {
         </p>
         <h3 className="article-title">{article.title}</h3>
         {article.description && (
-          <p className="article-desc">{article.description}{article.description.length >= 220 ? '…' : ''}</p>
+          <p className="article-desc">{article.description}</p>
         )}
       </div>
     </a>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { fetchSchedule, formatDate, classifyDate } from '../utils/api';
 import DateNav from './DateNav';
 import GameCard from './GameCard';
@@ -23,13 +23,14 @@ export default function GamesView({ selectedDate, onDateChange, favoriteTeamId, 
     dateClass === 'yesterday' ? "Yesterday's Games" :
     'Games';
 
-  const sorted = favoriteTeamId
-    ? [...games].sort((a, b) => {
-        const aFav = a.teams?.away?.team?.id === favoriteTeamId || a.teams?.home?.team?.id === favoriteTeamId;
-        const bFav = b.teams?.away?.team?.id === favoriteTeamId || b.teams?.home?.team?.id === favoriteTeamId;
-        return aFav === bFav ? 0 : aFav ? -1 : 1;
-      })
-    : games;
+  const sorted = useMemo(() => {
+    if (!favoriteTeamId) return games;
+    return [...games].sort((a, b) => {
+      const aFav = a.teams?.away?.team?.id === favoriteTeamId || a.teams?.home?.team?.id === favoriteTeamId;
+      const bFav = b.teams?.away?.team?.id === favoriteTeamId || b.teams?.home?.team?.id === favoriteTeamId;
+      return aFav === bFav ? 0 : aFav ? -1 : 1;
+    });
+  }, [games, favoriteTeamId]);
 
   return (
     <div className="games-view">

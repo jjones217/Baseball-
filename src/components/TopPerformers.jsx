@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchDailyStats, formatDate, parseLocalDate } from '../utils/api';
+import { fetchDailyStats, formatDate, parseLocalDate, normalizePos } from '../utils/api';
 import { getTeamColors } from '../utils/teamColors';
 
 function hitterScore(s) {
@@ -44,11 +44,6 @@ function PerformerRow({ name, team, line, favoriteTeamId }) {
   );
 }
 
-function normalizePos(abbr) {
-  if (!abbr) return '';
-  if (['LF', 'CF', 'RF'].includes(abbr)) return 'OF';
-  return abbr;
-}
 
 export default function TopPerformers({ season, favoriteTeamId, teamFilter = '', posFilter = '' }) {
   const [hitters,  setHitters]  = useState([]);
