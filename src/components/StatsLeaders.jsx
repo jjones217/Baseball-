@@ -203,6 +203,10 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     { key: 'battingAverage',              label: 'AVG',  primary: !isShortRange },
     { key: 'homeRuns',                    label: 'HR'  },
     { key: 'rbi',                         label: 'RBI' },
+    { key: 'runs',                        label: 'R'   },
+    { key: 'onBasePercentage',            label: 'OBP' },
+    { key: 'sluggingPercentage',          label: 'SLG' },
+    { key: 'onBasePlusSlugging',          label: 'OPS' },
     { key: 'stolenBases',                 label: 'SB'  },
   ];
   const starterCols = isShortRange ? [

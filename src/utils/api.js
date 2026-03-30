@@ -52,12 +52,16 @@ function normalizeHitting(s) {
     homeRuns:       s.homeRuns,
     rbi:            s.rbi,
     hits:           s.hits,
-    stolenBases:    s.stolenBases,
-    baseOnBalls:    s.baseOnBalls,
-    atBats:         s.atBats,
-    doubles:        s.doubles,
-    triples:        s.triples,
-    gamesPlayed:    s.gamesPlayed,
+    stolenBases:        s.stolenBases,
+    baseOnBalls:        s.baseOnBalls,
+    atBats:             s.atBats,
+    doubles:            s.doubles,
+    triples:            s.triples,
+    runs:               s.runs,
+    onBasePercentage:   s.obp  ?? s.onBasePercentage,
+    sluggingPercentage: s.slg  ?? s.sluggingPercentage,
+    onBasePlusSlugging: s.ops  ?? s.onBasePlusSlugging,
+    gamesPlayed:        s.gamesPlayed,
   };
 }
 
