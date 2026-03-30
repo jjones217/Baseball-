@@ -11,7 +11,8 @@ const DIVISION_NAMES = {
   205: 'NL Central',
 };
 
-const DIVISION_ORDER = [201, 205, 200, 203, 202, 204];
+// AL: East → Central → West, NL: East → Central → West
+const DIVISION_ORDER = [201, 202, 200, 204, 205, 203];
 
 function StandingsTable({ record }) {
   const divisionName = DIVISION_NAMES[record.division?.id] || record.division?.name || 'Unknown';
