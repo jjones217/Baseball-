@@ -47,13 +47,16 @@ export function classifyDate(dateStr) {
 }
 
 function normalizeHitting(s) {
+  const pa = s.plateAppearances || 0;
+  const so = s.strikeOuts ?? s.strikeouts ?? 0;
+  const bb = s.baseOnBalls ?? 0;
   return {
     battingAverage: s.avg          ?? s.battingAverage,
     homeRuns:       s.homeRuns,
     rbi:            s.rbi,
     hits:           s.hits,
     stolenBases:        s.stolenBases,
-    baseOnBalls:        s.baseOnBalls,
+    baseOnBalls:        bb,
     atBats:             s.atBats,
     doubles:            s.doubles,
     triples:            s.triples,
@@ -61,6 +64,9 @@ function normalizeHitting(s) {
     onBasePercentage:   s.obp  ?? s.onBasePercentage,
     sluggingPercentage: s.slg  ?? s.sluggingPercentage,
     onBasePlusSlugging: s.ops  ?? s.onBasePlusSlugging,
+    strikeouts:         so,
+    walkRate:           pa > 0 ? `${(bb / pa * 100).toFixed(1)}%` : null,
+    strikeoutRate:      pa > 0 ? `${(so / pa * 100).toFixed(1)}%` : null,
     gamesPlayed:        s.gamesPlayed,
   };
 }

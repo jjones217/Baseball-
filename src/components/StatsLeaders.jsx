@@ -207,6 +207,10 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     { key: 'onBasePercentage',            label: 'OBP' },
     { key: 'sluggingPercentage',          label: 'SLG' },
     { key: 'onBasePlusSlugging',          label: 'OPS' },
+    { key: 'strikeouts',                  label: 'SO'  },
+    { key: 'baseOnBalls',                 label: 'BB'  },
+    { key: 'strikeoutRate',               label: 'K%'  },
+    { key: 'walkRate',                    label: 'BB%' },
     { key: 'stolenBases',                 label: 'SB'  },
   ];
   const starterCols = isShortRange ? [
