@@ -79,6 +79,18 @@ function normalizePitching(s) {
   };
 }
 
+// Fetches the regular season start date from the MLB Seasons API.
+// Uses regularSeasonStartDate — the authoritative source, excludes spring training.
+export async function fetchSeasonStart(season) {
+  const res = await fetch(`${BASE_URL}/seasons/${season}?sportId=1`);
+  if (!res.ok) throw new Error(`Season fetch failed: ${res.status}`);
+  const data = await res.json();
+  const dateStr = data.seasons?.[0]?.regularSeasonStartDate; // e.g. "2026-03-25"
+  if (!dateStr) return null;
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d, 12, 0, 0); // noon local to avoid DST edge cases
+}
+
 // Returns complete stat lines for all players — no partial-category merging
 export async function fetchStatLeaders(group, season, { limit = 400, playerPool = '', startDate = '', endDate = '' } = {}) {
   const statsType = startDate ? 'byDateRange' : 'season';

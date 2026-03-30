@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchStatLeaders } from '../utils/api';
+import { fetchStatLeaders, fetchSeasonStart } from '../utils/api';
 import { getTeamColors, teamColors } from '../utils/teamColors';
 import TopPerformers from './TopPerformers';
 
@@ -22,16 +22,14 @@ const FILTERS = [
   { label: 'Last 7',  days: 7       },
 ];
 
-const SEASON_START = new Date('2026-03-25T12:00:00');
-
-function getDateRange(days) {
+function getDateRange(days, seasonStart) {
   if (days === 0) return { startDate: '', endDate: '' };
   const fmt = (d) => `${String(d.getMonth() + 1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`;
   const end   = new Date();
   let   start = new Date();
   start.setDate(end.getDate() - (days - 1));
-  // Never go before the season start
-  if (start < SEASON_START) start = new Date(SEASON_START);
+  // Never go before the actual regular season start (from MLB API)
+  if (seasonStart && start < seasonStart) start = new Date(seasonStart);
   return { startDate: fmt(start), endDate: fmt(end) };
 }
 
@@ -155,20 +153,28 @@ const isStarter  = (p) => isPitcher(p) && Number(p.stats.gamesStarted || 0) > 0;
 const isReliever = (p) => isPitcher(p) && Number(p.stats.gamesStarted || 0) === 0;
 
 export default function StatsLeaders({ season, favoriteTeamId }) {
-  const [activeDays, setActiveDays] = useState('daily');
-  const [hitters,    setHitters]    = useState([]);
-  const [starters,   setStarters]   = useState([]);
-  const [relievers,  setRelievers]  = useState([]);
-  const [loading,    setLoading]    = useState(true);
-  const [error,      setError]      = useState(null);
-  const [teamFilter, setTeamFilter] = useState('');
-  const [posFilter,  setPosFilter]  = useState('');
+  const [activeDays,  setActiveDays]  = useState('daily');
+  const [hitters,     setHitters]     = useState([]);
+  const [starters,    setStarters]    = useState([]);
+  const [relievers,   setRelievers]   = useState([]);
+  const [loading,     setLoading]     = useState(true);
+  const [error,       setError]       = useState(null);
+  const [teamFilter,  setTeamFilter]  = useState('');
+  const [posFilter,   setPosFilter]   = useState('');
+  const [seasonStart, setSeasonStart] = useState(null);
+
+  // Fetch the real regular season start date from the MLB Seasons API
+  useEffect(() => {
+    fetchSeasonStart(season).then(setSeasonStart).catch(() => setSeasonStart(null));
+  }, [season]);
 
   useEffect(() => {
     if (activeDays === 'daily') return;
+    // For date-range views, wait until we have the season start so the floor is correct
+    if (activeDays !== 0 && seasonStart === null) return;
     setLoading(true);
     setError(null);
-    const { startDate, endDate } = getDateRange(activeDays);
+    const { startDate, endDate } = getDateRange(activeDays, seasonStart);
     const isDateRange = activeDays !== 0;
     const pool = isDateRange ? '' : 'qualified';
     const opts = (extra = {}) => ({ startDate, endDate, playerPool: pool, ...extra });
@@ -188,7 +194,7 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [season, activeDays]);
+  }, [season, activeDays, seasonStart]);
 
   const isShortRange = activeDays === 7;
 
