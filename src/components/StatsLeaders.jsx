@@ -70,7 +70,7 @@ function LeaderTable({ title, players, cols, loading, favoriteTeamId, limit = 10
     } else {
       setSortKey(col.key);
       // ERA/WHIP/WHIP-like stats sort ascending by default
-      setSortDir(['earnedRunAverage', 'walksAndHitsPerInningPitched'].includes(col.key) ? 'asc' : 'desc');
+      setSortDir(['earnedRunAverage', 'walksAndHitsPerInningPitched', 'walksPer9Inn', 'hitsPer9Inn'].includes(col.key) ? 'asc' : 'desc');
     }
   }
 
@@ -213,24 +213,23 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     { key: 'walkRate',                    label: 'BB%' },
     { key: 'stolenBases',                 label: 'SB'  },
   ];
-  const starterCols = isShortRange ? [
-    { key: 'strikeouts',                   label: 'K',    primary: true },
-    { key: 'inningsPitched',               label: 'IP'  },
-    { key: 'earnedRunAverage',             label: 'ERA' },
-    { key: 'walksAndHitsPerInningPitched', label: 'WHIP'},
-  ] : [
-    { key: 'earnedRunAverage',             label: 'ERA',  primary: true },
-    { key: 'wins',                         label: 'W'   },
-    { key: 'strikeouts',                   label: 'K'   },
-    { key: 'inningsPitched',               label: 'IP'  },
-    { key: 'walksAndHitsPerInningPitched', label: 'WHIP'},
+  const pitchingSharedCols = [
+    { key: 'earnedRunAverage',             label: 'ERA',  primary: !isShortRange },
+    { key: 'walksAndHitsPerInningPitched', label: 'WHIP' },
+    { key: 'strikeouts',                   label: 'K',    primary: isShortRange },
+    { key: 'inningsPitched',               label: 'IP'   },
+    { key: 'strikeoutsPer9Inn',            label: 'K/9'  },
+    { key: 'walksPer9Inn',                 label: 'BB/9' },
+    { key: 'strikeoutWalkRatio',           label: 'K/BB' },
+    { key: 'hitsPer9Inn',                  label: 'H/9'  },
+    { key: 'baseOnBalls',                  label: 'BB'   },
+    { key: 'homeRuns',                     label: 'HR'   },
   ];
+  const starterCols = pitchingSharedCols;
   const relieverCols = [
     { key: 'saves',            label: 'SV',  primary: !isShortRange },
-    { key: 'strikeouts',       label: 'K',   primary: isShortRange },
     { key: 'holds',            label: 'HLD' },
-    { key: 'inningsPitched',   label: 'IP'  },
-    { key: 'earnedRunAverage', label: 'ERA' },
+    ...pitchingSharedCols,
   ];
 
   function applyFilters(players) {

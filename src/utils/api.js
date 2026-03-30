@@ -74,7 +74,6 @@ function normalizeHitting(s) {
 function normalizePitching(s) {
   return {
     earnedRunAverage:             s.era  ?? s.earnedRunAverage,
-    wins:                         s.wins,
     strikeouts:                   s.strikeOuts ?? s.strikeouts,
     inningsPitched:               s.inningsPitched,
     walksAndHitsPerInningPitched: s.whip ?? s.walksAndHitsPerInningPitched,
@@ -84,8 +83,13 @@ function normalizePitching(s) {
     gamesStarted:                 s.gamesStarted,
     gamesPlayed:                  s.gamesPitched ?? s.gamesPlayed,
     baseOnBalls:                  s.baseOnBalls,
+    homeRuns:                     s.homeRuns,
     hits:                         s.hits,
     runs:                         s.runs,
+    strikeoutsPer9Inn:            s.strikeoutsPer9Inn,
+    walksPer9Inn:                 s.walksPer9Inn,
+    strikeoutWalkRatio:           s.strikeoutWalkRatio,
+    hitsPer9Inn:                  s.hitsPer9Inn,
   };
 }
 
