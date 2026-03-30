@@ -36,13 +36,13 @@ function BattingTable({ teamData, teamColors }) {
                   <span className="bs-pos" style={{ color: teamColors.primary }}>{pos}</span>
                   {p.person?.fullName}
                 </td>
-                <td>{b.atBats ?? '–'}</td>
-                <td>{b.runs ?? '–'}</td>
-                <td>{b.hits ?? '–'}</td>
-                <td>{b.rbi ?? '–'}</td>
-                <td>{b.baseOnBalls ?? '–'}</td>
-                <td>{b.strikeOuts ?? '–'}</td>
-                <td className="bs-avg">{b.avg ?? '–'}</td>
+                <td>{b.atBats ?? '—'}</td>
+                <td>{b.runs ?? '—'}</td>
+                <td>{b.hits ?? '—'}</td>
+                <td>{b.rbi ?? '—'}</td>
+                <td>{b.baseOnBalls ?? '—'}</td>
+                <td>{b.strikeOuts ?? '—'}</td>
+                <td className="bs-avg">{b.avg ?? '—'}</td>
               </tr>
             );
           })}
@@ -50,12 +50,12 @@ function BattingTable({ teamData, teamColors }) {
         <tfoot>
           <tr className="bs-totals">
             <td className="bs-name">Totals</td>
-            <td>{totals.atBats ?? '–'}</td>
-            <td>{totals.runs ?? '–'}</td>
-            <td>{totals.hits ?? '–'}</td>
-            <td>{totals.rbi ?? '–'}</td>
-            <td>{totals.baseOnBalls ?? '–'}</td>
-            <td>{totals.strikeOuts ?? '–'}</td>
+            <td>{totals.atBats ?? '—'}</td>
+            <td>{totals.runs ?? '—'}</td>
+            <td>{totals.hits ?? '—'}</td>
+            <td>{totals.rbi ?? '—'}</td>
+            <td>{totals.baseOnBalls ?? '—'}</td>
+            <td>{totals.strikeOuts ?? '—'}</td>
             <td></td>
           </tr>
         </tfoot>
@@ -86,13 +86,13 @@ function PitchingTable({ teamData, teamColors }) {
                 <td className="bs-name">
                   {p.person?.fullName}{note}
                 </td>
-                <td>{pt.inningsPitched ?? '–'}</td>
-                <td>{pt.hits ?? '–'}</td>
-                <td>{pt.runs ?? '–'}</td>
-                <td>{pt.earnedRuns ?? '–'}</td>
-                <td>{pt.baseOnBalls ?? '–'}</td>
-                <td>{pt.strikeOuts ?? '–'}</td>
-                <td className="bs-avg">{pt.era ?? '–'}</td>
+                <td>{pt.inningsPitched ?? '—'}</td>
+                <td>{pt.hits ?? '—'}</td>
+                <td>{pt.runs ?? '—'}</td>
+                <td>{pt.earnedRuns ?? '—'}</td>
+                <td>{pt.baseOnBalls ?? '—'}</td>
+                <td>{pt.strikeOuts ?? '—'}</td>
+                <td className="bs-avg">{pt.era ?? '—'}</td>
               </tr>
             );
           })}
@@ -100,12 +100,12 @@ function PitchingTable({ teamData, teamColors }) {
         <tfoot>
           <tr className="bs-totals">
             <td className="bs-name">Totals</td>
-            <td>{totals.inningsPitched ?? '–'}</td>
-            <td>{totals.hits ?? '–'}</td>
-            <td>{totals.runs ?? '–'}</td>
-            <td>{totals.earnedRuns ?? '–'}</td>
-            <td>{totals.baseOnBalls ?? '–'}</td>
-            <td>{totals.strikeOuts ?? '–'}</td>
+            <td>{totals.inningsPitched ?? '—'}</td>
+            <td>{totals.hits ?? '—'}</td>
+            <td>{totals.runs ?? '—'}</td>
+            <td>{totals.earnedRuns ?? '—'}</td>
+            <td>{totals.baseOnBalls ?? '—'}</td>
+            <td>{totals.strikeOuts ?? '—'}</td>
             <td></td>
           </tr>
         </tfoot>

@@ -4,12 +4,12 @@ export default function Linescore({ linescore, awayTeam, homeTeam, accentColor }
   }
 
   const innings = linescore.innings;
-  const awayRuns = linescore.teams?.away?.runs ?? '-';
-  const homeRuns = linescore.teams?.home?.runs ?? '-';
-  const awayHits = linescore.teams?.away?.hits ?? '-';
-  const homeHits = linescore.teams?.home?.hits ?? '-';
-  const awayErrors = linescore.teams?.away?.errors ?? '-';
-  const homeErrors = linescore.teams?.home?.errors ?? '-';
+  const awayRuns   = linescore.teams?.away?.runs   ?? '—';
+  const homeRuns   = linescore.teams?.home?.runs   ?? '—';
+  const awayHits   = linescore.teams?.away?.hits   ?? '—';
+  const homeHits   = linescore.teams?.home?.hits   ?? '—';
+  const awayErrors = linescore.teams?.away?.errors ?? '—';
+  const homeErrors = linescore.teams?.home?.errors ?? '—';
 
   return (
     <div className="linescore-wrap">
@@ -31,7 +31,7 @@ export default function Linescore({ linescore, awayTeam, homeTeam, accentColor }
               <td className="team-col">{awayTeam?.abbreviation || 'AWY'}</td>
               {innings.map((inn) => (
                 <td key={inn.num} className="inn-col">
-                  {inn.away?.runs ?? (inn.away?.runs === 0 ? '0' : '-')}
+                  {inn.away?.runs ?? '—'}
                 </td>
               ))}
               <td className="rhe-col runs-col" style={{ color: accentColor }}>{awayRuns}</td>
@@ -42,7 +42,7 @@ export default function Linescore({ linescore, awayTeam, homeTeam, accentColor }
               <td className="team-col">{homeTeam?.abbreviation || 'HME'}</td>
               {innings.map((inn) => (
                 <td key={inn.num} className="inn-col">
-                  {inn.home?.runs ?? (inn.home?.runs === 0 ? '0' : 'x')}
+                  {inn.home?.runs ?? 'x'}
                 </td>
               ))}
               <td className="rhe-col runs-col" style={{ color: accentColor }}>{homeRuns}</td>

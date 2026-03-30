@@ -90,10 +90,10 @@ export default function GameCard({ game, isFavorite, favoriteTeamId, onSetFavori
       style={{
         '--away-color': awayColors.primary,
         '--home-color': homeColors.primary,
-        ...(isFavorite && { '--fav-color': favTeamColors.primary }),
+        ...(isFavorite && favTeamColors && { '--fav-color': favTeamColors.primary }),
       }}
     >
-      {isFavorite && <div className="fav-bar" style={{ background: favTeamColors.primary }} />}
+      {isFavorite && favTeamColors && <div className="fav-bar" style={{ background: favTeamColors.primary }} />}
 
       <div className="card-header">
         <StatusBadge status={status} />
