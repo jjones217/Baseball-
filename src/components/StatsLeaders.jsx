@@ -57,7 +57,7 @@ function PlayerRow({ rank, player, cols, favoriteTeamId }) {
   );
 }
 
-function LeaderTable({ title, players, cols, loading, favoriteTeamId, limit = 10, defaultSort }) {
+function LeaderTable({ title, players, cols, loading, favoriteTeamId, limit = 10, defaultSort, emptyMessage = 'No data available' }) {
   const [sortKey, setSortKey] = useState(() => defaultSort?.key || cols.find(c => c.primary)?.key || cols[0]?.key);
   const [sortDir, setSortDir] = useState(() => defaultSort?.dir || 'desc');
 
@@ -80,8 +80,13 @@ function LeaderTable({ title, players, cols, loading, favoriteTeamId, limit = 10
   }
 
   const sorted = [...players].sort((a, b) => {
-    const av = parseFloat(a.stats[sortKey]) || 0;
-    const bv = parseFloat(b.stats[sortKey]) || 0;
+    const parse = (v) => { const n = parseFloat(v); return Number.isFinite(n) ? n : null; };
+    const av = parse(a.stats[sortKey]);
+    const bv = parse(b.stats[sortKey]);
+    // Always push missing values to the bottom regardless of sort direction
+    if (av === null && bv === null) return 0;
+    if (av === null) return 1;
+    if (bv === null) return -1;
     return sortDir === 'asc' ? av - bv : bv - av;
   }).slice(0, limit);
 
@@ -112,7 +117,7 @@ function LeaderTable({ title, players, cols, loading, favoriteTeamId, limit = 10
             </thead>
             <tbody>
               {sorted.length === 0 ? (
-                <tr><td colSpan={cols.length + 2} className="sl-empty">No data available</td></tr>
+                <tr><td colSpan={cols.length + 2} className="sl-empty">{emptyMessage}</td></tr>
               ) : sorted.map((p, i) => (
                 <PlayerRow
                   key={p.person?.id ?? i}
@@ -233,6 +238,12 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
     });
   }
 
+  const teamName  = teamFilter ? (TEAM_LIST.find(t => t.id === Number(teamFilter))?.abbr ?? '') : '';
+  const rangeNote = activeDays > 0 ? ` in this date range` : '';
+  const emptyMsg  = teamFilter
+    ? `No qualifying ${teamName} players${rangeNote}`
+    : activeDays > 0 ? 'No qualifying players yet — more appear as the season progresses' : 'No data available';
+
   const filterBar = (
     <div className="leaders-dropdown-bar">
       <select
@@ -284,9 +295,9 @@ export default function StatsLeaders({ season, favoriteTeamId }) {
       ) : (
         <>
           {error && <div className="error">{error}</div>}
-          <LeaderTable title="Top 10 Hitters"          players={applyFilters(hitters)}   cols={hitterCols}   loading={loading} favoriteTeamId={favoriteTeamId} limit={10} defaultSort={getSortConfig(activeDays).hitter} />
-          <LeaderTable title="Top 5 Starting Pitchers" players={applyFilters(starters)}  cols={starterCols}  loading={loading} favoriteTeamId={favoriteTeamId} limit={5}  defaultSort={getSortConfig(activeDays).starter} />
-          <LeaderTable title="Top 5 Relievers"         players={applyFilters(relievers)} cols={relieverCols} loading={loading} favoriteTeamId={favoriteTeamId} limit={5}  defaultSort={getSortConfig(activeDays).reliever} />
+          <LeaderTable title="Top 10 Hitters"          players={applyFilters(hitters)}   cols={hitterCols}   loading={loading} favoriteTeamId={favoriteTeamId} limit={10} defaultSort={getSortConfig(activeDays).hitter}   emptyMessage={emptyMsg} />
+          <LeaderTable title="Top 5 Starting Pitchers" players={applyFilters(starters)}  cols={starterCols}  loading={loading} favoriteTeamId={favoriteTeamId} limit={5}  defaultSort={getSortConfig(activeDays).starter}  emptyMessage={emptyMsg} />
+          <LeaderTable title="Top 5 Relievers"         players={applyFilters(relievers)} cols={relieverCols} loading={loading} favoriteTeamId={favoriteTeamId} limit={5}  defaultSort={getSortConfig(activeDays).reliever} emptyMessage={emptyMsg} />
         </>
       )}
     </div>

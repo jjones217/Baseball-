@@ -128,9 +128,14 @@ export default function TopPerformers({ season, favoriteTeamId, teamFilter = '',
     return true;
   });
 
+  const noResults = visibleHitters.length === 0 && visiblePitchers.length === 0;
+
   return (
     <div className="leader-section tp-section">
       {dateNav}
+      {noResults && (teamFilter || posFilter) && (
+        <p className="sl-empty" style={{ padding: '1rem 0' }}>No players found for this filter.</p>
+      )}
       <div className="tp-columns">
         {visibleHitters.length > 0 && (
           <div className="tp-group">
