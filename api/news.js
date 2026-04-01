@@ -56,7 +56,9 @@ export default async function handler(req, res) {
     }
 
     const xml = await response.text();
-    const articles = parseRSS(xml).slice(0, 8);
+    const articles = parseRSS(xml)
+      .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
+      .slice(0, 8);
 
     res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
     return res.status(200).json({ articles });
