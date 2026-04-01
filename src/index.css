@@ -1410,7 +1410,7 @@ body {
   background-repeat: no-repeat;
   background-position: right 0.5rem center;
   padding-right: 1.6rem;
-  min-width: 120px;
+  min-width: 200px;
   transition: border-color 0.15s;
 }
 
