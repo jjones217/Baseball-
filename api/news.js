@@ -1,4 +1,5 @@
 const TEAM_NAMES = {
+  0:   'MLB baseball',
   108: 'Los Angeles Angels',
   109: 'Arizona Diamondbacks',
   110: 'Baltimore Orioles',
@@ -37,12 +38,13 @@ export default async function handler(req, res) {
   const teamId = Number(req.query.teamId);
   const teamName = TEAM_NAMES[teamId];
 
-  if (!teamName) {
+  if (teamName === undefined) {
     return res.status(400).json({ error: 'Unknown teamId' });
   }
 
   try {
-    const query = encodeURIComponent(`${teamName} MLB baseball`);
+    const searchTerm = teamId === 0 ? 'MLB baseball' : `${teamName} MLB baseball`;
+    const query = encodeURIComponent(searchTerm);
     const url = `https://news.google.com/rss/search?q=${query}&hl=en-US&gl=US&ceid=US:en`;
 
     const response = await fetch(url, {
@@ -77,13 +79,12 @@ function parseRSS(xml) {
     const title = dashIdx !== -1 ? rawTitle.slice(0, dashIdx).trim() : rawTitle.trim();
     const source = dashIdx !== -1 ? rawTitle.slice(dashIdx + 3).trim() : '';
 
-    const link = extractTag(item, 'link') || '';
+    // Google News RSS: <link> is a plain text node; fall back to <guid> if empty
+    const link = (extractTag(item, 'link') || extractCDATA(item, 'guid') || extractTag(item, 'guid') || '').trim();
     const pubDate = extractTag(item, 'pubDate') || '';
-    // Google News descriptions are just the title + source in HTML — not useful
-    const description = '';
 
     if (title) {
-      articles.push({ title, source, description, link: link.trim(), pubDate: pubDate.trim(), thumbnail: null });
+      articles.push({ title, source, description: '', link, pubDate: pubDate.trim(), thumbnail: null });
     }
   }
 
@@ -91,24 +92,11 @@ function parseRSS(xml) {
 }
 
 function extractCDATA(str, tag) {
-  const re = new RegExp(`<${tag}><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`);
+  const re = new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\\/${tag}>`);
   return str.match(re)?.[1] ?? null;
 }
 
 function extractTag(str, tag) {
   const re = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`);
   return str.match(re)?.[1] ?? null;
-}
-
-function stripHtml(str) {
-  return str
-    // Decode encoded entities first so encoded tags get stripped too
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/<[^>]+>/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
 }

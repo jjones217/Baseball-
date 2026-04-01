@@ -1016,63 +1016,10 @@ body {
   gap: 1.25rem;
 }
 
-/* Team picker grid */
-.team-picker-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.team-search {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text-primary);
-  font-size: 0.85rem;
-  padding: 0.45rem 0.75rem;
-  outline: none;
-  width: 100%;
-  max-width: 240px;
-  transition: border-color 0.15s;
-}
-
-.team-search::placeholder {
-  color: var(--text-muted);
-}
-
-.team-search:focus {
-  border-color: var(--gold-dim);
-}
-
-.team-picker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.team-pick-btn {
+/* News filter */
+.news-filter {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  padding: 0.3rem 0.55rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.72rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  white-space: nowrap;
-}
-
-.team-pick-btn:hover {
-  border-color: var(--pick-color, var(--border-light));
-  color: var(--text-primary);
-}
-
-.team-pick-btn.active {
-  font-weight: 700;
 }
 
 /* News section header */
