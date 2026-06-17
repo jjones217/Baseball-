@@ -53,7 +53,10 @@ function StandingsTable({ record }) {
                   <td>{tr.losses}</td>
                   <td>{tr.winningPercentage}</td>
                   <td>{tr.gamesBack === '-' ? '—' : tr.gamesBack}</td>
-                  <td className="st-hide-sm">{tr.records?.splitRecords?.find(r => r.type === 'lastTen')?.wins ?? '?'}-{tr.records?.splitRecords?.find(r => r.type === 'lastTen')?.losses ?? '?'}</td>
+                  <td className="st-hide-sm">{(() => {
+                    const lastTen = tr.records?.splitRecords?.find(r => r.type === 'lastTen');
+                    return lastTen ? `${lastTen.wins}-${lastTen.losses}` : '—';
+                  })()}</td>
                   <td className="st-hide-sm">{tr.streak?.streakCode || '—'}</td>
                 </tr>
               );
