@@ -128,6 +128,12 @@ body {
   text-transform: uppercase;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .app-nav {
   display: flex;
   gap: 0.25rem;
@@ -155,6 +161,100 @@ body {
   color: var(--gold);
   border-color: var(--gold-dim);
   background: rgba(201, 169, 110, 0.08);
+}
+
+/* ==========================================
+   Auth Control
+   ========================================== */
+
+.auth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.auth-btn:hover {
+  color: var(--gold);
+  border-color: var(--gold-dim);
+}
+
+.auth-control {
+  position: relative;
+}
+
+.auth-avatar-btn {
+  display: flex;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.auth-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  object-fit: cover;
+}
+
+.auth-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+  color: var(--gold);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.auth-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 180px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+  padding: 0.5rem;
+  z-index: 110;
+}
+
+.auth-menu-name {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  padding: 0.3rem 0.5rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.4rem;
+  word-break: break-word;
+}
+
+.auth-menu-signout {
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--red);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.auth-menu-signout:hover {
+  background: rgba(201, 64, 64, 0.1);
 }
 
 /* ==========================================

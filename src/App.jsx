@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import GamesView from './components/GamesView';
 import Standings from './components/Standings';
 import NewsView from './components/NewsView';
 import StatsLeaders from './components/StatsLeaders';
+import AuthControl from './components/AuthControl';
 import { getDefaultDate } from './utils/api';
-import { getFavoriteTeamId, setFavoriteTeamId } from './utils/favorites';
+import {
+  getFavoriteTeamId,
+  setFavoriteTeamId,
+  clearFavoriteTeamId,
+  reconcileFavoriteTeamOnSignIn,
+  setCloudFavoriteTeamId,
+} from './utils/favorites';
+import { watchAuthState, completeRedirectSignIn, signInWithGoogle, signOutUser } from './utils/auth';
+import { isFirebaseConfigured } from './utils/firebase';
 import './App.css';
 
 const CURRENT_SEASON = new Date().getFullYear();
@@ -13,11 +22,35 @@ export default function App() {
   const [tab, setTab] = useState('games');
   const [selectedDate, setSelectedDate] = useState(getDefaultDate());
   const [favoriteTeamId, setFavoriteTeam] = useState(() => getFavoriteTeamId());
+  const [user, setUser] = useState(null);
+  const prevUidRef = useRef(null);
 
   function handleSetFavorite(teamId) {
     setFavoriteTeamId(teamId);
     setFavoriteTeam(teamId);
+    if (user) {
+      setCloudFavoriteTeamId(user.uid, teamId);
+    }
   }
+
+  useEffect(() => {
+    completeRedirectSignIn();
+    return watchAuthState(setUser);
+  }, []);
+
+  useEffect(() => {
+    const uid = user?.uid ?? null;
+    const prevUid = prevUidRef.current;
+
+    if (uid && uid !== prevUid) {
+      reconcileFavoriteTeamOnSignIn(uid).then(setFavoriteTeam);
+    } else if (!uid && prevUid) {
+      clearFavoriteTeamId();
+      Promise.resolve(null).then(setFavoriteTeam);
+    }
+
+    prevUidRef.current = uid;
+  }, [user]);
 
   return (
     <div className="app">
@@ -36,12 +69,17 @@ export default function App() {
             </div>
           </div>
 
-          <nav className="app-nav">
-            <button className={`nav-btn ${tab === 'games'     ? 'active' : ''}`} onClick={() => setTab('games')}>Scores</button>
-            <button className={`nav-btn ${tab === 'standings' ? 'active' : ''}`} onClick={() => setTab('standings')}>Standings</button>
-            <button className={`nav-btn ${tab === 'leaders'   ? 'active' : ''}`} onClick={() => setTab('leaders')}>Leaders</button>
-            <button className={`nav-btn ${tab === 'news'      ? 'active' : ''}`} onClick={() => setTab('news')}>News</button>
-          </nav>
+          <div className="header-right">
+            <nav className="app-nav">
+              <button className={`nav-btn ${tab === 'games'     ? 'active' : ''}`} onClick={() => setTab('games')}>Scores</button>
+              <button className={`nav-btn ${tab === 'standings' ? 'active' : ''}`} onClick={() => setTab('standings')}>Standings</button>
+              <button className={`nav-btn ${tab === 'leaders'   ? 'active' : ''}`} onClick={() => setTab('leaders')}>Leaders</button>
+              <button className={`nav-btn ${tab === 'news'      ? 'active' : ''}`} onClick={() => setTab('news')}>News</button>
+            </nav>
+            {isFirebaseConfigured && (
+              <AuthControl user={user} onSignIn={signInWithGoogle} onSignOut={signOutUser} />
+            )}
+          </div>
         </div>
       </header>
 
