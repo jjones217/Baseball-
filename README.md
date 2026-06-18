@@ -15,12 +15,23 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 Sign-in and cross-device favorite-team sync are optional. The app works fully without them — the sign-in icon in the header simply doesn't render until Firebase is configured.
 
-1. Create a project at https://console.firebase.google.com
+1. Create a project at https://console.firebase.google.com (or reuse an existing one)
 2. Enable **Authentication → Sign-in method → Google**
-3. Create a **Firestore Database** (production mode)
-4. Deploy the security rules in `firestore.rules`: `firebase deploy --only firestore:rules`
-5. Copy `.env.example` to `.env` and fill in the values from Project Settings → General → Your apps → Web app config
-6. Add the same variables in Vercel → Project Settings → Environment Variables for production/preview
+3. Create/use a **Realtime Database**. The favorite team is stored at `users/{uid}/navhawk/favoriteTeamId`, namespaced so it won't collide with other apps that may share the same project. The default per-user rule below (Realtime Database → Rules) covers it:
+   ```json
+   {
+     "rules": {
+       "users": {
+         "$uid": {
+           ".read": "auth !== null && auth.uid === $uid",
+           ".write": "auth !== null && auth.uid === $uid"
+         }
+       }
+     }
+   }
+   ```
+4. Copy `.env.example` to `.env` and fill in the values from Project Settings → General → Your apps → Web app config
+5. Add the same variables in Vercel → Project Settings → Environment Variables for production/preview
 
 `.env` is gitignored — never commit real Firebase credentials.
 
