@@ -1,5 +1,9 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { ref, get, set } from 'firebase/database';
 import { db, isFirebaseConfigured } from './firebase';
+
+// Namespaced under "navhawk" since this Firebase project's Realtime Database
+// is shared with another app that already owns the top-level users/{uid} node.
+const favoritePath = (uid) => `users/${uid}/navhawk/favoriteTeamId`;
 
 const KEY = 'navhawk_favorite_team';
 
@@ -28,29 +32,29 @@ export function clearFavoriteTeamId() {
   }
 }
 
-// Reconciles localStorage with the signed-in user's Firestore document.
+// Reconciles localStorage with the signed-in user's Realtime Database record.
 // Cloud value wins if one was already saved; otherwise the local value (if any)
 // is migrated up so it isn't silently lost on first sign-in.
 export async function reconcileFavoriteTeamOnSignIn(uid) {
   if (!isFirebaseConfigured || !db || !uid) return getFavoriteTeamId();
 
   try {
-    const ref = doc(db, 'users', uid);
-    const snap = await getDoc(ref);
+    const teamRef = ref(db, favoritePath(uid));
+    const snap = await get(teamRef);
 
-    if (snap.exists() && snap.data().favoriteTeamId != null) {
-      const cloudTeamId = snap.data().favoriteTeamId;
+    if (snap.exists() && snap.val() != null) {
+      const cloudTeamId = snap.val();
       setFavoriteTeamId(cloudTeamId);
       return cloudTeamId;
     }
 
     const localTeamId = getFavoriteTeamId();
     if (localTeamId != null) {
-      await setDoc(ref, { favoriteTeamId: localTeamId }, { merge: true });
+      await set(teamRef, localTeamId);
     }
     return localTeamId;
   } catch (err) {
-    console.warn('Failed to sync favorite team with Firestore.', err);
+    console.warn('Failed to sync favorite team with the Realtime Database.', err);
     return getFavoriteTeamId();
   }
 }
@@ -58,8 +62,8 @@ export async function reconcileFavoriteTeamOnSignIn(uid) {
 export async function setCloudFavoriteTeamId(uid, teamId) {
   if (!isFirebaseConfigured || !db || !uid) return;
   try {
-    await setDoc(doc(db, 'users', uid), { favoriteTeamId: teamId }, { merge: true });
+    await set(ref(db, favoritePath(uid)), teamId);
   } catch (err) {
-    console.warn('Failed to save favorite team to Firestore.', err);
+    console.warn('Failed to save favorite team to the Realtime Database.', err);
   }
 }
