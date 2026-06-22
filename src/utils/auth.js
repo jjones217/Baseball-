@@ -7,14 +7,16 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider, isFirebaseConfigured } from './firebase';
 
-// Popup sign-in is unreliable in mobile Safari and in-app browsers, so those
-// environments use a redirect flow instead.
+// Redirect needs a real window.open, which in-app browsers (Instagram, Facebook,
+// Line) don't support — those fall back to a redirect flow. Everywhere else,
+// including standalone Safari/iOS, popup is preferred: redirect's full-page
+// round trip through the authDomain relies on storage continuity that Safari's
+// cross-site tracking prevention can silently break (confirmed in production —
+// see the ITP message in completeRedirectSignIn below).
 function shouldUseRedirect() {
   const ua = navigator.userAgent || '';
-  const isIOS = /iPad|iPhone|iPod/.test(ua);
-  const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|Chrome/.test(ua);
   const isInAppBrowser = /FBAN|FBAV|Instagram|Line\//.test(ua);
-  return isIOS || isSafari || isInAppBrowser;
+  return isInAppBrowser;
 }
 
 // Set right before signInWithRedirect navigates away, and checked when the
