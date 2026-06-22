@@ -79,8 +79,15 @@ export async function completeRedirectSignIn(onError) {
   }
 }
 
+// Guards against a second tap starting a new popup before the first one
+// resolves — without this, Firebase cancels the first popup's promise with
+// auth/cancelled-popup-request, which would otherwise surface as a bogus
+// error even though the second (superseding) attempt succeeds.
+let signInInFlight = false;
+
 export async function signInWithGoogle(onError) {
-  if (!isFirebaseConfigured || !auth || !googleProvider) return;
+  if (!isFirebaseConfigured || !auth || !googleProvider || signInInFlight) return;
+  signInInFlight = true;
   try {
     if (shouldUseRedirect()) {
       await redirectToGoogle();
@@ -88,8 +95,10 @@ export async function signInWithGoogle(onError) {
       await signInWithPopup(auth, googleProvider);
     }
   } catch (err) {
-    // Popup blocked or unsupported in this environment — fall back to redirect.
-    if (err?.code === 'auth/popup-blocked' || err?.code === 'auth/operation-not-supported-in-this-environment') {
+    if (err?.code === 'auth/cancelled-popup-request' || err?.code === 'auth/popup-closed-by-user') {
+      // Expected: a duplicate sign-in attempt got cancelled, or the user
+      // dismissed the popup themselves. Not a real failure.
+    } else if (err?.code === 'auth/popup-blocked' || err?.code === 'auth/operation-not-supported-in-this-environment') {
       try {
         await redirectToGoogle();
       } catch (redirectErr) {
@@ -100,6 +109,8 @@ export async function signInWithGoogle(onError) {
       console.warn('Google sign-in failed.', err);
       onError?.(`Google sign-in failed: ${err.message}`);
     }
+  } finally {
+    signInInFlight = false;
   }
 }
 
