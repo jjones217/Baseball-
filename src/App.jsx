@@ -23,19 +23,19 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState(getDefaultDate());
   const [favoriteTeamId, setFavoriteTeam] = useState(() => getFavoriteTeamId());
   const [user, setUser] = useState(null);
-  const [syncError, setSyncError] = useState(null);
+  const [errorNotice, setErrorNotice] = useState(null);
   const prevUidRef = useRef(null);
 
   function handleSetFavorite(teamId) {
     setFavoriteTeamId(teamId);
     setFavoriteTeam(teamId);
     if (user) {
-      setCloudFavoriteTeamId(user.uid, teamId, (err) => setSyncError(err.message));
+      setCloudFavoriteTeamId(user.uid, teamId, (err) => setErrorNotice(`Favorite team sync failed: ${err.message}`));
     }
   }
 
   useEffect(() => {
-    completeRedirectSignIn();
+    completeRedirectSignIn(setErrorNotice);
     return watchAuthState(setUser);
   }, []);
 
@@ -44,7 +44,7 @@ export default function App() {
     const prevUid = prevUidRef.current;
 
     if (uid && uid !== prevUid) {
-      reconcileFavoriteTeamOnSignIn(uid, (err) => setSyncError(err.message)).then(setFavoriteTeam);
+      reconcileFavoriteTeamOnSignIn(uid, (err) => setErrorNotice(`Favorite team sync failed: ${err.message}`)).then(setFavoriteTeam);
     } else if (!uid && prevUid) {
       clearFavoriteTeamId();
       Promise.resolve(null).then(setFavoriteTeam);
@@ -78,14 +78,18 @@ export default function App() {
               <button className={`nav-btn ${tab === 'news'      ? 'active' : ''}`} onClick={() => setTab('news')}>News</button>
             </nav>
             {isFirebaseConfigured && (
-              <AuthControl user={user} onSignIn={signInWithGoogle} onSignOut={signOutUser} />
+              <AuthControl
+                user={user}
+                onSignIn={() => signInWithGoogle(setErrorNotice)}
+                onSignOut={signOutUser}
+              />
             )}
-            {syncError && (
+            {errorNotice && (
               <button
-                className="sync-error-badge"
-                onClick={() => alert(`Favorite team sync failed:\n\n${syncError}`)}
-                title="Favorite team sync failed — tap for details"
-                aria-label="Favorite team sync failed"
+                className="error-badge"
+                onClick={() => alert(errorNotice)}
+                title="Something went wrong — tap for details"
+                aria-label="Error details"
               >
                 ⚠
               </button>
