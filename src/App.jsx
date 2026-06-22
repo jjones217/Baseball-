@@ -23,13 +23,14 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState(getDefaultDate());
   const [favoriteTeamId, setFavoriteTeam] = useState(() => getFavoriteTeamId());
   const [user, setUser] = useState(null);
+  const [syncError, setSyncError] = useState(null);
   const prevUidRef = useRef(null);
 
   function handleSetFavorite(teamId) {
     setFavoriteTeamId(teamId);
     setFavoriteTeam(teamId);
     if (user) {
-      setCloudFavoriteTeamId(user.uid, teamId);
+      setCloudFavoriteTeamId(user.uid, teamId, (err) => setSyncError(err.message));
     }
   }
 
@@ -43,7 +44,7 @@ export default function App() {
     const prevUid = prevUidRef.current;
 
     if (uid && uid !== prevUid) {
-      reconcileFavoriteTeamOnSignIn(uid).then(setFavoriteTeam);
+      reconcileFavoriteTeamOnSignIn(uid, (err) => setSyncError(err.message)).then(setFavoriteTeam);
     } else if (!uid && prevUid) {
       clearFavoriteTeamId();
       Promise.resolve(null).then(setFavoriteTeam);
@@ -78,6 +79,16 @@ export default function App() {
             </nav>
             {isFirebaseConfigured && (
               <AuthControl user={user} onSignIn={signInWithGoogle} onSignOut={signOutUser} />
+            )}
+            {syncError && (
+              <button
+                className="sync-error-badge"
+                onClick={() => alert(`Favorite team sync failed:\n\n${syncError}`)}
+                title="Favorite team sync failed — tap for details"
+                aria-label="Favorite team sync failed"
+              >
+                ⚠
+              </button>
             )}
           </div>
         </div>

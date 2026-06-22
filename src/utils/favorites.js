@@ -35,7 +35,7 @@ export function clearFavoriteTeamId() {
 // Reconciles localStorage with the signed-in user's Realtime Database record.
 // Cloud value wins if one was already saved; otherwise the local value (if any)
 // is migrated up so it isn't silently lost on first sign-in.
-export async function reconcileFavoriteTeamOnSignIn(uid) {
+export async function reconcileFavoriteTeamOnSignIn(uid, onError) {
   if (!isFirebaseConfigured || !db || !uid) return getFavoriteTeamId();
 
   try {
@@ -55,15 +55,17 @@ export async function reconcileFavoriteTeamOnSignIn(uid) {
     return localTeamId;
   } catch (err) {
     console.warn('Failed to sync favorite team with the Realtime Database.', err);
+    onError?.(err);
     return getFavoriteTeamId();
   }
 }
 
-export async function setCloudFavoriteTeamId(uid, teamId) {
+export async function setCloudFavoriteTeamId(uid, teamId, onError) {
   if (!isFirebaseConfigured || !db || !uid) return;
   try {
     await set(ref(db, favoritePath(uid)), teamId);
   } catch (err) {
     console.warn('Failed to save favorite team to the Realtime Database.', err);
+    onError?.(err);
   }
 }

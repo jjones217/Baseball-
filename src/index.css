@@ -187,6 +187,22 @@ body {
   border-color: var(--gold-dim);
 }
 
+.sync-error-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid #c94040;
+  color: #e07070;
+  cursor: pointer;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
 .auth-control {
   position: relative;
 }
