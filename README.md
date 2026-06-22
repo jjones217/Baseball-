@@ -30,7 +30,7 @@ Sign-in and cross-device favorite-team sync are optional. The app works fully wi
      }
    }
    ```
-4. Copy `.env.example` to `.env` and fill in the values from Project Settings → General → Your apps → Web app config
+4. Copy `.env.example` to `.env` and fill in the values from Project Settings → General → Your apps → Web app config. `VITE_FIREBASE_DATABASE_URL` is the Realtime Database's URL shown at the top of the Realtime Database → Data tab (e.g. `https://<project-id>-default-rtdb.firebaseio.com`) — required, since the SDK can't reliably derive it from the project ID alone.
 5. Add the same variables in Vercel → Project Settings → Environment Variables for production/preview
 
 `.env` is gitignored — never commit real Firebase credentials.
